@@ -4,10 +4,6 @@ from ev3dev2.sensor import *
 from ev3dev2.sensor.lego import *
 import time
 
-# Definindo valores de leitura do ColorSensor
-COLOR_BLACK = 1
-COLOR_WHITE = 6
-
 def threeVal(sensor):
 	"Pega 3 leituras do sensor e retorna a cor predominante"
 	#op = Operacao (esquerda ou direita)
@@ -27,8 +23,10 @@ def threeVal(sensor):
 	return COLOR_BLACK if (preto > branco) else COLOR_WHITE
 
 def alinhaPosicao():
-	ultraSense = UltrasonicSensor(INPUT_1) #Distancia
-	colorsenseF = ColorSensor(INPUT_2) #Cor Frente
+	# Definindo valores de leitura do ColorSensor
+	COLOR_BLACK = 1
+	COLOR_WHITE = 6
+
 	colorsenseE = ColorSensor(INPUT_3) #Cor Esquerda
 	colorsenseD = ColorSensor(INPUT_4) #Cor Direita
 	colorsenseD.mode = 'COL-COLOR' #Muda de LUz para Cor
@@ -36,7 +34,6 @@ def alinhaPosicao():
 
 	passo = 0 #Identifica se passou da linha ou ainda não
 
-	ultraSense.mode = 'US-DIST-CM' #Não funciona, a distancia continua em mm
 	motoresq = LargeMotor(OUTPUT_B)
 	motordir = LargeMotor(OUTPUT_D)
 	tank_drive = MoveTank(OUTPUT_B, OUTPUT_D) #Controle mutuo dos motores
@@ -44,13 +41,9 @@ def alinhaPosicao():
 	actime = time.clock() #Pega o tempo atual (So pra parar depois de x segundos)
 
 	while True:
-		dist = ultraSense.value()
-		frontColor = colorsenseF.value()
 		leftColor =	colorsenseE.value()
 		rightColor = colorsenseD.value()
 
-		print(frontColor, " Frente")
-		print(dist, " Ultrassom")
 		print(leftColor, " Esquerda")
 		print(rightColor, " Direita")
 		print(passo, " Passo")
@@ -60,7 +53,8 @@ def alinhaPosicao():
 			if (passo == 0):
 				#Esta chegando, nao saindo
 				while (rightColor == COLOR_WHITE and leftColor == COLOR_BLACK):
-					tank_drive.on(SpeedPercent(1),SpeedPercent(20)) #Pivo do lado esquerdo
+					# Movimentar o lado do pivô para sair da linha (3)
+					tank_drive.on(SpeedPercent(3),SpeedPercent(20)) #Pivo do lado esquerdo
 					leftColor = threeVal(colorsenseE)
 					rightColor = threeVal(colorsenseD)
 			#else:
@@ -76,7 +70,8 @@ def alinhaPosicao():
 		if (leftColor == COLOR_WHITE and rightColor == COLOR_BLACK):
 			if(passo == 0):
 				while (leftColor == COLOR_WHITE and rightColor != COLOR_WHITE):
-					tank_drive.on(SpeedPercent(20),SpeedPercent(1))
+					# Movimentar o lado do pivô para sair da linha (3)
+					tank_drive.on(SpeedPercent(20),SpeedPercent(3))
 					leftColor =	threeVal(colorsenseE)
 					rightColor = threeVal(colorsenseD)
 			#else:
