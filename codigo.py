@@ -129,3 +129,5 @@ tank_drive.on(SpeedPercent(0),SpeedPercent(0))
 #tank_drive.on_for_rotations(SpeedPercent(-40), SpeedPercent(0),1.25)
 #tank_drive.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 3.7)
 
+if __name__ == '__main__':
+	acharHome()
