@@ -40,8 +40,13 @@ def percorreArena(arena, posiAt, posiAn):
 			#Se estou andando em Y, agora o X deve aumentar ou diminuir (baseado no Y atual)
 			if(posiAt[1] != posiAn[1]): posiAt[1] = 7 - posiAn[0]
 
+		while(
 		tank_drive.on_for_rotations(SpeedPercent(40),SpeedPercent(40), 2.252) #Anda um quadrado (Mudar: a execução tem que ocorrer independente do movimento)
 		#TODO: Identificar também pelo cruzamento da faixa preta
+
+
+		#EDICAO FEITA
+
 
 		if posiAt[1] < posiAn[1]:
 			#Andando até Y = 0
