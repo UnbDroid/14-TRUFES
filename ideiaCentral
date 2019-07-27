@@ -1,0 +1,12 @@
+O robô será iniciado em alguma lateral e irá seguir reto até encontrar uma lavanderia. Após encontrar a lavanderia teremos acesso ao "mapeamento" de todas lavandeiras.
+
+- Missão do robô em cada lateral
+# Seguir reto avaliando linha a linha pela lateral da arena em busca de um cubo.
+# Ao encontrar o primeiro cubo deve-se ir até ele, verificar a cor, voltar de ré e deixar na lavanderia correspondente. 
+# Nesse momento deve, na mesma lateral, tentar encontrar um cubo da cor oposta para preencher as duas lavanderias daquela lateral.
+	Como o robô já foi até uma lavanderia deve-se continuar seguindo a lateral pelo caminho menor
+# Se não encontrarmos um cubo seguiremos fazendo o contorno da arena, ou seja, seguir para a próxima lateral
+
+~ Sempre que encontrar um cubo, verificar se a lavanderia da cor correspondente está ocupada, se não estiver levar. Quando deixar um cubo verificar se as lavanderias da lateral estão preenchidas. Se estiver já ignora a lateral e passa para a próxima. 
+
+Ao chegar na lateral seguinte da arena iremos fazer o mesmo procedimento tentando encontrar um cubo de cada cor verificando linha a linha, na pior das hipóteses só acharemos um cubo de cada cor em cada lateral, de tal forma que em uma volta completa na arena resolveremos o desafio. Ao preencher as duas lavanderias daquela lateral partiremos para a próxima lateral, sem a necessidade de continuar as verificações (visto que as duas lavanderias já estão completas e só conseguimos deixar um cubo em sua lavanderia chegando de ré na lateral)
