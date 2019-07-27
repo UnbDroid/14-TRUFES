@@ -16,9 +16,6 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive):
 	# Inicializando as variaveis de tempo
 	leftTime = 0
 	rightTime = 0
-	iniTime = 0
-	totaleftTime = 0
-	totalrightTime = 0
 
 	#Inicializando as variaveis dos sensores de cor
 	leftColor = sensorE.value()
@@ -27,116 +24,54 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive):
 	sensorE.mode = 'COL-COLOR' #Muda de Luz para Cor
 	sensorD.mode = 'COL-COLOR'
 
-	#tank_drive.on(SpeedPercent(velocidade),SpeedPercent(velocidade)) #Inicia o movimento
+	iniTime = time.clock()
 
-	leftColor = sensorE.value()
-	rightColor = sensorD.value()
-	SAngle = False
-	# if(leftColor == COLOR_BLACK and rightColor == COLOR_WHITE): 
-	# 	print("ENTROU")
-	# 	rightTime = time.clock()
-	# 	leftTime = time.clock()
-	# 	iniTime = time.clock()
-
-	# 	while(leftColor==COLOR_BLACK or rightColor == COLOR_BLACK):
-	# 		leftColor = sensorE.value()
-	# 		rightColor = sensorD.value()
-
-	# 		if(leftColor==COLOR_WHITE):
-	# 			# Esquerda passou a linha preta - Tempo de saída da esquerda
-	# 			leftTime = time.clock()
-	# 			SAngle = True
-
-	# 	# Ao sair do while direita passou linha preta (em SAngle)
-		
-	# 	# Ângulos pequenos
-	# 	if(SAngle):
-	# 		rightTime = time.clock()
-
-	# 	else:
-	# 		leftTime = time.clock()
-	# 		while(rightColor==COLOR_WHITE):
-	# 			rightColor = sensorD.value()
-			
-	# 		while(rightColor == COLOR_BLACK):
-	# 			rightColor = sensorD.value()
-	# 		rightTime = time.clock()
-	# 	totaleftTime = (rightTime - iniTime) - (leftTime - iniTime)
-
-	# 	ajusteTime = time.clock()
-	# 	while(time.clock()-ajusteTime < int(totaleftTime*2)):
-	# 		print("algumacoisa")
-	# 		print(totaleftTime)
-	# 		tank_drive.on(SpeedPercent((velocidade/2)), SpeedPercent(velocidade))
-		
-	# 	tank_drive.on(SpeedPercent((velocidade)), SpeedPercent(velocidade))
-
-	# Verificando a direita chegando primeiro no preto
-
-	if(rightColor == COLOR_BLACK and leftColor == COLOR_WHITE):
-		print("ENTROU2")
-		rightTime = time.clock()
-		leftTime = time.clock()
-		iniTime = time.clock()
-
-		while(leftColor!=COLOR_WHITE or rightColor != COLOR_WHITE):
-			newtime = time.clock()
-			print("While 2")
-
-			if(rightColor!=COLOR_BLACK and SAngle == False):
-				print("PASSOU")
-				# Direita passou a linha preta - Tempo de saída da direita
-				rightTime = time.clock()
-				SAngle = True
-			leftColor = sensorE.value()
-			rightColor = sensorD.value()
-			print(leftColor, "ESQUERDA")
-			print(rightColor, "DIREITA")
-			newtime = time.clock() - newtime
-			print(newtime)
-
-		# Ao sair do while esquerda passou linha preta (em SAngle)
-		print(SAngle)
-		# Ângulos pequenos
-		if(SAngle):
+	while((time.clock() - iniTime) < 0.7):
+		leftColor = sensorE.value()
+		rightColor = sensorD.value()
+		if(leftColor == COLOR_BLACK):
 			leftTime = time.clock()
-
-		else:
+			#print(leftTime, "LEFT")
+		if(rightColor == COLOR_BLACK):
 			rightTime = time.clock()
-			while(leftColor==COLOR_WHITE):
-				leftColor = sensorE.value()
-			
-			while(leftColor == COLOR_BLACK):
-				leftColor = sensorE.value()
-			leftTime = time.clock()
+			#print(rightTime, "RIGHT")
 
-		totalrightTime = (leftTime - iniTime) - (rightTime - iniTime)
-		ajusteTime = time.clock()
-		# Mudar a potência dos motores pelo dobro do tempo para alinhar
-		# while(time.clock()-ajusteTime < int(totalrightTime*2)):
-		# 	print(totalrightTime)
-		# 	print("algumacoisa2")
-			#tank_drive.on(SpeedPercent((velocidade)), SpeedPercent(velocidade/2))
-	
-		#tank_drive.on(SpeedPercent((velocidade)), SpeedPercent(velocidade))
+	if(leftTime > rightTime):
+		# Menor time = sair primeiro
+		print(leftTime-rightTime)
+		fixedTime = 2*(leftTime-rightTime+0.02)
+		tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2),fixedTime) 
+		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
+	if(leftTime < rightTime):
+		# Menor time = sair primeiro
+		fixedTime = 2*(rightTime-leftTime+0.02)
+		print(rightTime-leftTime)
+		tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), fixedTime)        
+		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 
 
 if __name__ == '__main__':
 	actime = time.clock()
-	velocidade = 20
+	velocidade = 40
 
 	colorsenseE = ColorSensor(INPUT_3) #Cor Esquerda
 	colorsenseD = ColorSensor(INPUT_4) #Cor Direita
 
-	motorE = LargeMotor(OUTPUT_B)
-	motorD = LargeMotor(OUTPUT_D)
+	ultrassom = UltrasonicSensor(INPUT_1)
+
 	tank_drive = MoveTank(OUTPUT_B, OUTPUT_D)
-	#tank_drive.on(SpeedPercent(velocidade),SpeedPercent(velocidade))
+	tank_drive.on(SpeedPercent(velocidade),SpeedPercent(velocidade))
 	while True:
+		if(ultrassom.value() <= 200):
+			print(distancia, "stop")
+			break
 		alinhaTempo(colorsenseE, colorsenseD, velocidade, tank_drive)
 		ntime = time.clock() - actime
-		if(ntime > 10):
+		'''if(ntime > 3):
 			#Acaba em 10s
-			break
-	motorE.off()
-	motorD.off()
+			break'''
+		distancia = ultrassom.value()/10
+		print("distancia: ", distancia)
+	tank_drive.on(SpeedPercent(0),SpeedPercent(0))
+	tank_drive.on_for_rotations(SpeedPercent(-100),SpeedPercent(0), 2.1)
+	
