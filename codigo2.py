@@ -36,15 +36,13 @@ def verificaBloco(sensorFrontal):
 	cor = cor/3
 	##########################################
 
-def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, sensorDir):
+def percorreArena(posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, sensorDir):
 	"Percorre a borda do grid, para achar os cubos. Retorna a arena completa."
 	achar = 0 #Sensor de distância, verficar cubos
 	numBlocos = -1 #Quantos blocos foram encontrados
-	posiBlocos = [[0] * 2 for i in range(4)] #4 Vetores de 2 '0's cada
 	distMotores = 0 #Quanto o motor rotacionou
 	tank_drive = MoveTank(OUTPUT_B, OUTPUT_D)
 	distUAn = 2250 #Distância medida anteriormente pelo Ultrassom
-	andandoEm = 0 #0 - X, 1 - Y
 	deveProcurar = 1
 
 	while numBlocos < 4:
