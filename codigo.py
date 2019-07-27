@@ -69,7 +69,7 @@ def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, s
 		tank_drive.on(SpeedPercent(VELOC_BASE),SpeedPercent(VELOC_BASE))
 
 		while(distMotores < 300 or (distUAn - distU) < 300): #Anda um quadrado
-			distMotores = int((motorEsq.value() + motorDir.value())/2)
+			distMotores = int((motorEsq.position + motorDir.position)/2)
 			distU = ultra.value()
 			if(corEsq == COLOR_BLACK or corDir == COLOR_BLACK):
 				print("Checa")
