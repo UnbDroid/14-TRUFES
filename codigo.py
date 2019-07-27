@@ -68,7 +68,8 @@ def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, s
 		corDir = sensorDir.value()
 		tank_drive.on(SpeedPercent(VELOC_BASE),SpeedPercent(VELOC_BASE))
 
-		while(distMotores < 300 or (distUAn - distU) < 300): #Anda um quadrado
+		while(distMotores < 300 ):#or (distUAn - distU) < 300): #Anda um quadrado
+
 			distMotores = int((motorEsq.position + motorDir.position)/2)
 			distU = ultra.value()
 			if(corEsq == COLOR_BLACK or corDir == COLOR_BLACK):
@@ -113,7 +114,8 @@ def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, s
 
 		if(deveProcurar):#Inicia o padrão
 			tank_drive.on_for_rotations(SpeedPercent(-VELOC_BASE),SpeedPercent(VELOC_BASE), ROTACAO) #Vira pra esquerda
-
+			distU = ultra.value()
+			
 			if(distU < ((300*TAMANHO_ARENA)-100)): #Achou algo...
 				numBlocos += 1
 				#VV Verifificar se o arrendondamento funciona direito
@@ -121,29 +123,51 @@ def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, s
 					correc = 0 if posiAt[0] else 1 #Correcao de +1 se viu a partir de um 0
 					posiBlocos[numBlocos][1] = posiAt[1] #Está na posição X do robô
 					posiBlocos[numBlocos][0] = abs(posiAt[0] - (int(distU / 300) + correc)) #Arredondamento da Distância em Y
+					if(correc):
+						#Como viu a partir de um 7, pintar de acordo
+						for i in range(TAMANHO_ARENA - (posiBlocos[numBlocos][0] + 1)):
+							arena[(TAMANHO_ARENA - i)][posiBlocos[numBlocos][1]] = 1
+					else:
+						#Como viu a partir de um 0, pintar de acordo
+						for i in range(posiBlocos[numBlocos][0]):
+							arena[i][posiBlocos[numBlocos][1]] = 1
 				else: #...enquanto andava em Y
 					correc = 0 if posiAt[1] else 1 #Correcao de +1 se viu a partir de um 0
 					posiBlocos[numBlocos][0] = posiAt[0] #Está na posição Y do robô
 					posiBlocos[numBlocos][1] = abs(posiAt[1] - (int(distU / 300) + correc)) #Arredondamento da Distância em X
-				if(numBlocos > 0):
-					for i in range(numBlocos):
-						print("Passo")
-						print(i)
-						print(numBlocos)
-						if(posiBlocos[i][0] == posiBlocos[numBlocos][0] and posiBlocos[i][1] == posiBlocos[numBlocos][1]):
-							#Achou um bloco que já tinha achado (Inútil?) (Atrapalha?)
-							numBlocos -= 1
+					if(correc):
+						#Como viu a partir de um 7, pintar de acordo
+						for i in range(TAMANHO_ARENA - (posiBlocos[numBlocos][1] + 1)):
+							arena[posiBlocos[numBlocos][0]][(TAMANHO_ARENA - i)] = 1
+					else:
+						#Como viu a partir de um 0, pintar de acordo
+						for i in range(posiBlocos[numBlocos][1]):
+							arena[posiBlocos[numBlocos][1]][i] = 1
+				if(numBlocos >= 0):
+					if(arena[posiBlocos[numBlocos][1]][posiBlocos[numBlocos][0]] == 2):
+						#Achou um bloco que já tinha achado (Inútil?) (Atrapalha?)
+						numBlocos -= 1
+					else:
+						arena[posiBlocos[numBlocos][1]][posiBlocos[numBlocos][0]] = 2
+				else:
+					arena[posiBlocos[numBlocos][1]][posiBlocos[numBlocos][0]] = 2
 			else:
 				for i in range(TAMANHO_ARENA):
 					if(andandoEm):
 						#Estava olhando a sequência Y
 						arena[i][posiAt[1]] = 1
 					else:
-						#Estava olhando a seuência X
+						#Estava olhando a sequência X
 						arena[posiAt[0]][i] = 1
-
 			tank_drive.on_for_rotations(SpeedPercent(VELOC_BASE),SpeedPercent(-VELOC_BASE), ROTACAO) #Vira pra direita
 
+	for i in range(TAMANHO_ARENA):
+		for j in range(TAMANHO_ARENA):
+			#Limpa os espaços restantes na arena
+			if(arena[i][j] == 0):
+				arena[i][j] = 1
+
+	arena[posiAt[0]][posiAt[1]] = 3 #Marca a posição do robô
 	return arena
 
 def main():
