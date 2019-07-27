@@ -17,7 +17,7 @@ def acharHome(ultra, drive, color):
 	dist = ultra.value()
 	drive.on(SpeedPercent(VELOC_BASE),SpeedPercent(VELOC_BASE))
 	
-	while dist > 170: 
+	while dist > 180: 
 		dist = ultra.value()
 		print("Procurando parede")
 		print(dist)
@@ -32,7 +32,7 @@ def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, s
 	numBlocos = -1 #Quantos blocos foram encontrados
 	posiBlocos = [[0] * 2 for i in range(4)] #4 Vetores de 2 '0's cada
 	distMotores = 0 #Quanto o motor rotacionou
-	tank_drive = MoveTank(OUTPUT_C, OUTPUT_D)
+	tank_drive = MoveTank(OUTPUT_B, OUTPUT_D)
 	distUAn = 2250 #Distância medida anteriormente pelo Ultrassom
 	andandoEm = 0 #0 - X, 1 - Y
 	deveProcurar = 0
@@ -64,11 +64,12 @@ def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, s
 		motorDir.reset()
 		distU = ultra.value()
 		distUAn = distU
+		distMotores = 0
 		corEsq = sensorEsq.value()
 		corDir = sensorDir.value()
 		tank_drive.on(SpeedPercent(VELOC_BASE),SpeedPercent(VELOC_BASE))
 
-		while(distMotores < 300 ):#or (distUAn - distU) < 300): #Anda um quadrado
+		while(distMotores < 600 ):#or (distUAn - distU) < 300): #Anda um quadrado
 
 			distMotores = int((motorEsq.position + motorDir.position)/2)
 			distU = ultra.value()
@@ -115,7 +116,7 @@ def percorreArena(arena, posiAt, posiAn, ultra, motorEsq, motorDir, sensorEsq, s
 		if(deveProcurar):#Inicia o padrão
 			tank_drive.on_for_rotations(SpeedPercent(-VELOC_BASE),SpeedPercent(VELOC_BASE), ROTACAO) #Vira pra esquerda
 			distU = ultra.value()
-			
+
 			if(distU < ((300*TAMANHO_ARENA)-100)): #Achou algo...
 				numBlocos += 1
 				#VV Verifificar se o arrendondamento funciona direito
@@ -175,9 +176,9 @@ def main():
 	sensorFrente = ColorSensor(INPUT_2)
 	sensorEsq = ColorSensor(INPUT_3)
 	sensorDir = ColorSensor(INPUT_4)
-	motorEsq = LargeMotor(OUTPUT_C)
+	motorEsq = LargeMotor(OUTPUT_B)
 	motorDir = LargeMotor(OUTPUT_D)
-	tank_drive = MoveTank(OUTPUT_C, OUTPUT_D)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+	tank_drive = MoveTank(OUTPUT_B, OUTPUT_D)                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               
 
 	arena = [[0] * (TAMANHO_ARENA+1) for i in range(TAMANHO_ARENA+1)]
 	posi_at = [TAMANHO_ARENA,1] #y,x
