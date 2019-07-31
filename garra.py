@@ -25,7 +25,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	cor = cor/3
 	##########################################
 	
-	if(cor in range (1,4)):
+	if(cor in range (0,8)):
 		print("Preto: ", cor)
 		if lateral == 1: #[0][0] e [1][0]
 			if coresLavanderias[0][0] == Preto:
@@ -76,7 +76,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 					return True
 				else:
 					return False
-	elif(cor > 30):
+	elif(cor >= 8):
 		print("Branco: ", cor)
 		if lateral == 1: #[0][0] e [1][0]
 			if coresLavanderias[0][0] == Branco:
@@ -131,24 +131,24 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 		print(sensorFrontal.value())
 
 def pegaBloco(garra1, garra2, tank_drive,lateral, coresLavanderias, lavanderias, sensorFrontal):
-	garra1.on_for_rotations(SpeedPercent(10), 0.2) #garra da esquerda abre
-	garra2.on_for_rotations(SpeedPercent(-10), 0.2) #garra da direita abre
+	garra1.on_for_rotations(SpeedPercent(10), 0.3) #garra da esquerda abre
+	garra2.on_for_rotations(SpeedPercent(-10), 0.3) #garra da direita abre
 	tank_drive.on_for_rotations(SpeedPercent(20),SpeedPercent(20), 0.65) #movimenta com base em 125mm de distância do cubo
 	if(verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)):
-		garra1.on_for_rotations(SpeedPercent(-10), 0.2) #garra da esquerda fecha
-		garra2.on_for_rotations(SpeedPercent(10), 0.2) #garra da direita fecha
+		garra1.on_for_rotations(SpeedPercent(-10), 0.3) #garra da esquerda fecha
+		garra2.on_for_rotations(SpeedPercent(10), 0.3) #garra da direita fecha
 	# Se não tiver que pegar, se afasta para deixar
 	else:
 		tank_drive.on_for_rotations(SpeedPercent(-20),SpeedPercent(-20), 0.65) 
-		garra1.on_for_rotations(SpeedPercent(-10), 0.2) #garra da esquerda fecha
-		garra2.on_for_rotations(SpeedPercent(10), 0.2) #garra da direita fecha
+		garra1.on_for_rotations(SpeedPercent(-10), 0.3) #garra da esquerda fecha
+		garra2.on_for_rotations(SpeedPercent(10), 0.3) #garra da direita fecha
 
 def largaBloco(garra1, garra2, tank_drive):
-	garra1.on_for_rotations(SpeedPercent(10), 0.2) #garra da esquerda abre
-	garra2.on_for_rotations(SpeedPercent(-10), 0.2) #garra da direita abre
+	garra1.on_for_rotations(SpeedPercent(10), 0.3) #garra da esquerda abre
+	garra2.on_for_rotations(SpeedPercent(-10), 0.3) #garra da direita abre
 	tank_drive.on_for_rotations(SpeedPercent(-20),SpeedPercent(-20), 0.65) #ré com base em 125mm de distância do cubo
-	garra1.on_for_rotations(SpeedPercent(-10), 0.2) #garra da esquerda fecha
-	garra2.on_for_rotations(SpeedPercent(10), 0.2) #garra da direita fecha
+	garra1.on_for_rotations(SpeedPercent(-10), 0.3) #garra da esquerda fecha
+	garra2.on_for_rotations(SpeedPercent(10), 0.3) #garra da direita fecha
 
 if __name__ == '__main__':
 
@@ -161,7 +161,6 @@ if __name__ == '__main__':
 	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias estão livres
 	coresLavanderias = [[Preto for i in range(2)] for j in range(2)] # Todas lavanderias são pretas
 
-	lavanderias[0][0] = False
 
 	# Lavandeira exemplo #
 	coresLavanderias[0][0] = Preto
