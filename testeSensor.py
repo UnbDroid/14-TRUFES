@@ -9,7 +9,7 @@ garra1.on_for_rotations(SpeedPercent(-10), 0.2) #garra da esquerda abre
 garra2.on_for_rotations(SpeedPercent(10), 0.2) #garra da direita abre
 
 colorsenseF = ColorSensor(INPUT_2)
-colorsenseF.MODE_RGB_RAW
+#colorsenseF.MODE_RGB_RAW
 colorsenseE = ColorSensor(INPUT_3)
 colorsenseD = ColorSensor(INPUT_4)
 
