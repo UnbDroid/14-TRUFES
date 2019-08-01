@@ -1,7 +1,7 @@
 from ev3dev2.motor import *
 from ev3dev2.sensor import *
 from ev3dev2.sensor.lego import *
-import time
+from time import sleep
 
 #Definindo o nome das cores da matriz de cores
 Preto = 0
@@ -19,13 +19,13 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	# Filtro de verificação da cor do cubo
 	cont = 0
 	cor = 0
-	while cont < 3:
+	while cont < 5:
 		cor += sensorFrontal.value()
 		cont +=1
-	cor = cor/3
+	cor = int(cor/5)
 	##########################################
 	
-	if(cor in range (0,8)):
+	if(cor < 11):
 		print("Preto: ", cor)
 		if lateral == 1: #[0][0] e [1][0]
 			if coresLavanderias[0][0] == Preto:
@@ -76,7 +76,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 					return True
 				else:
 					return False
-	elif(cor >= 8):
+	elif(cor >= 11):
 		print("Branco: ", cor)
 		if lateral == 1: #[0][0] e [1][0]
 			if coresLavanderias[0][0] == Branco:
@@ -128,27 +128,32 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 				else:
 					return False
 	else:
-		print(sensorFrontal.value())
+		print(cor)
 
 def pegaBloco(garra1, garra2, tank_drive,lateral, coresLavanderias, lavanderias, sensorFrontal):
-	garra1.on_for_rotations(SpeedPercent(10), 0.3) #garra da esquerda abre
-	garra2.on_for_rotations(SpeedPercent(-10), 0.3) #garra da direita abre
-	tank_drive.on_for_rotations(SpeedPercent(20),SpeedPercent(20), 0.65) #movimenta com base em 125mm de distância do cubo
+	garra1.on_for_rotations(SpeedPercent(10), 0.25) #garra da esquerda abre
+	garra2.on_for_rotations(SpeedPercent(-10), 0.25) #garra da direita abre
+	tank_drive.on_for_rotations(SpeedPercent(40),SpeedPercent(40), 0.7) #movimenta com base em 125mm de distância do cubo
+	sleep(0.5)
 	if(verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)):
-		garra1.on_for_rotations(SpeedPercent(-10), 0.3) #garra da esquerda fecha
-		garra2.on_for_rotations(SpeedPercent(10), 0.3) #garra da direita fecha
+		garra1.on_for_rotations(SpeedPercent(-10), 0.125) #garra da esquerda fecha
+		garra2.on_for_rotations(SpeedPercent(10), 0.125) #garra da direita fecha
+		garra1.on_for_rotations(SpeedPercent(-10), 0.125) #garra da esquerda fecha
+		garra2.on_for_rotations(SpeedPercent(10), 0.125) #garra da direita fecha
 	# Se não tiver que pegar, se afasta para deixar
 	else:
-		tank_drive.on_for_rotations(SpeedPercent(-20),SpeedPercent(-20), 0.65) 
-		garra1.on_for_rotations(SpeedPercent(-10), 0.3) #garra da esquerda fecha
-		garra2.on_for_rotations(SpeedPercent(10), 0.3) #garra da direita fecha
+		tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) 
+		garra1.on_for_rotations(SpeedPercent(-10), 0.25) #garra da esquerda fecha
+		garra2.on_for_rotations(SpeedPercent(10), 0.25) #garra da direita fecha
 
 def largaBloco(garra1, garra2, tank_drive):
-	garra1.on_for_rotations(SpeedPercent(10), 0.3) #garra da esquerda abre
-	garra2.on_for_rotations(SpeedPercent(-10), 0.3) #garra da direita abre
-	tank_drive.on_for_rotations(SpeedPercent(-20),SpeedPercent(-20), 0.65) #ré com base em 125mm de distância do cubo
-	garra1.on_for_rotations(SpeedPercent(-10), 0.3) #garra da esquerda fecha
-	garra2.on_for_rotations(SpeedPercent(10), 0.3) #garra da direita fecha
+	garra1.on_for_rotations(SpeedPercent(10), 0.05) #garra da esquerda abre
+	garra2.on_for_rotations(SpeedPercent(-10), 0.05) #garra da direita abre
+	garra1.on_for_rotations(SpeedPercent(10), 0.2) #garra da esquerda abre
+	garra2.on_for_rotations(SpeedPercent(-10), 0.2) #garra da direita abre
+	tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) #ré com base em 125mm de distância do cubo
+	garra1.on_for_rotations(SpeedPercent(-10), 0.25) #garra da esquerda fecha
+	garra2.on_for_rotations(SpeedPercent(10), 0.25) #garra da direita fecha
 
 if __name__ == '__main__':
 
@@ -161,6 +166,7 @@ if __name__ == '__main__':
 	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias estão livres
 	coresLavanderias = [[Preto for i in range(2)] for j in range(2)] # Todas lavanderias são pretas
 
+	lavanderias[0][0] = False
 
 	# Lavandeira exemplo #
 	coresLavanderias[0][0] = Preto
@@ -173,14 +179,14 @@ if __name__ == '__main__':
 	ultrassom = UltrasonicSensor(INPUT_1)
 	garra1 = Motor(OUTPUT_A)
 	garra2 = Motor(OUTPUT_B)
+	# Sem aplicar modo no leitor frontal
 	sensorFrontal = ColorSensor(INPUT_2)
-	sensorFrontal.MODE_RGB_RAW
 	
-	tank_drive.on(SpeedRPM(20), SpeedRPM(20)) #inicia movimento
-	while(ultrassom.value() > 125):
+	tank_drive.on(SpeedRPM(40), SpeedRPM(40)) #inicia movimento
+	while(ultrassom.value() > 130):
 		g=1
 	tank_drive.on(SpeedRPM(0), SpeedRPM(0)) #para movimento
 	pegaBloco(garra1, garra2, tank_drive, lateral, coresLavanderias, lavanderias, sensorFrontal) #função de aproximar e pegar o bloco
-	tank_drive.on_for_rotations(SpeedPercent(-100),SpeedPercent(100), 2) # 360 para teste
+	tank_drive.on_for_rotations(SpeedPercent(-50),SpeedPercent(-50), 2) # 360 para teste
 	largaBloco(garra1, garra2, tank_drive) #função que afasta e larga o bloco
 
