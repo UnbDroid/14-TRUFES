@@ -16,6 +16,7 @@ Livre = True
 Ocupada = False
 
 def alinhaTempo(sensorE, sensorD, velocidade, tank_drive):
+    print('alinhando')
 
     # Inicializando as variaveis de tempo
     leftTime = 0
@@ -66,25 +67,24 @@ def iniciar():
 
     coresLavanderias = [[Preto for i in range(2)] for j in range(2)] # Todas lavanderias iniciam pretas
 
-    move_tank.on(SpeedRPM(40), SpeedRPM(40))
+    move_tank.on(SpeedRPM(20), SpeedRPM(20))
     
     while True:
         
         # Filtrando o valor do ultrassom
         distancia = 0
         contador = 0
-        if(colorE == COLOR_BLACK or colorD == COLOR_BLACK):
-            alinhaTempo(colorE,colorD,20,move_tank)
-        while(contador < 3):
+
+        while(contador < 5):
             distancia += ultrassom.value()
             contador += 1
-        distancia = int(distancia/3)
+        distancia = int(distancia/5)
 
         print("ultrassom: ", distancia)
 
         # Direcionando-se à primeira lavanderia
-        # Inserir alinhamento
-        if(distancia <= 150):
+
+        if(distancia <= 145):
             move_tank.on_for_rotations(SpeedRPM(30), SpeedRPM(-30), 1.05)
 
             # Filtro para cor de leitura #
@@ -125,6 +125,10 @@ def iniciar():
                 coresLavanderias[0][0] = Branco
                 coresLavanderias[1][1] = Branco
                 break
+
+        if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
+            alinhaTempo(colorE,colorD,20,move_tank)
+
     print("Preto = 0 | Branco = 1")
     print('Superior esquerdo: ', coresLavanderias[0][0])
     print('Superior direito: ', coresLavanderias[0][1])
