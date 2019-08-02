@@ -19,3 +19,10 @@ Equipe DROID - 14 na TRUFES VI (2019)
 - Cor Esquerda (3)
 - Cor Direita(4)
 
+# Marcação dos fios
+- Garras (azul escuro)
+- Rodas (azul claro)
+- Ultrassom (verde claro)
+- Sensor de cores laterais (branco)
+- Sensor de cor frontal (sem marcação)
+
