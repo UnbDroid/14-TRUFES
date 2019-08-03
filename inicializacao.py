@@ -2,6 +2,7 @@ from ev3dev2.motor import *
 from ev3dev2.sensor import *
 from ev3dev2.sensor.lego import *
 from statistics import mode
+from alinhamentoTempo import alinhaTempo
 
 #Definindo o nome das cores da matriz de cores
 Preto = 0
@@ -15,41 +16,6 @@ COLOR_WHITE = 6
 Livre = True
 Ocupada = False
 
-def alinhaTempo(sensorE, sensorD, velocidade, tank_drive):
-    print('alinhando')
-
-    # Inicializando as variaveis de tempo
-    leftTime = 0
-    rightTime = 0
-
-    #Inicializando as variaveis dos sensores de cor
-    leftColor = sensorE.value()
-    rightColor = sensorD.value()
-
-    iniTime = time.clock()
-
-    while((time.clock() - iniTime) < 0.7):
-        leftColor = sensorE.value()
-        rightColor = sensorD.value()
-        if(leftColor == COLOR_BLACK):
-            leftTime = time.clock()
-            #print(leftTime, "LEFT")
-        if(rightColor == COLOR_BLACK):
-            rightTime = time.clock()
-            #print(rightTime, "RIGHT")
-
-    if(leftTime > rightTime):
-        # Menor time = sair primeiro
-        print(leftTime-rightTime)
-        fixedTime = 2*(leftTime-rightTime+0.02)
-        tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2),fixedTime) 
-        tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
-    if(leftTime < rightTime):
-        # Menor time = sair primeiro
-        fixedTime = 2*(rightTime-leftTime+0.02)
-        print(rightTime-leftTime)
-        tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), fixedTime)        
-        tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 
 def iniciar():
     # Inicialização de motores
