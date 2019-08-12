@@ -59,11 +59,14 @@ def verificaLinha():
     ultrassom = UltrasonicSensor(INPUT_1)
     contador = 0
     distancia = 0
+    g = 0
     while (contador < 5):
         distancia += ultrassom.value()
         contador += 1
+        g = ultrassom.value()
+        print(g)
     distancia = int(distancia / 5)
-    print(distancia)
+    print("Distancia final: ", distancia)
     if (distancia < dist_max):  # Pode ser que o cubo esteja no último quadrado
         print(1)
         return True
@@ -71,3 +74,23 @@ def verificaLinha():
         print(0)
         move_tank.on_for_rotations(SpeedRPM(-30), SpeedRPM(30), 1.05)
         return False
+
+def irAoCubo():
+    tank_drive = MoveTank(OUTPUT_C, OUTPUT_D)
+    ultrassom = UltrasonicSensor(INPUT_1)  # Reinicializacao
+    garra1 = Motor(OUTPUT_A)  # garraE
+    garra2 = Motor(OUTPUT_B)  # garraD
+    # Sem aplicar modo no leitor frontal
+    sensorFrontal = ColorSensor(INPUT_2)  # colorF
+
+    tank_drive.on(SpeedRPM(40), SpeedRPM(40))  # inicia movimento
+
+    while (ultrassom.value() > 130):
+        pass
+
+    tank_drive.on(SpeedRPM(0), SpeedRPM(0))  # para movimento
+    pegaBloco(garra1, garra2, tank_drive, 1, coresLavanderias, lavanderias,
+              sensorFrontal)  # função de aproximar e pegar o bloco
+    tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(-50), 2)  # 360 para teste
+    largaBloco(garra1, garra2, tank_drive)  # função que afasta e larga o bloco
+

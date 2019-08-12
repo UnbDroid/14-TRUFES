@@ -2,15 +2,34 @@ from ev3dev2.motor import *
 from ev3dev2.sensor.lego import *
 from inicializacao import iniciar
 from achaCubo import *
+from garra import *
 
 garraE, garraD, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
-disponibilidadeLavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
+lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
 comCubo = False
 while(comCubo == False):
     descerLateral()
     comCubo = verificaLinha()
 
-# Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente 
+tank_drive = MoveTank(OUTPUT_C, OUTPUT_D)
+ultrassom = UltrasonicSensor(INPUT_1) # Reinicializacao
+garra1 = Motor(OUTPUT_A) # garraE
+garra2 = Motor(OUTPUT_B) # garraD
+# Sem aplicar modo no leitor frontal
+sensorFrontal = ColorSensor(INPUT_2) # colorF
+
+tank_drive.on(SpeedRPM(40), SpeedRPM(40))  # inicia movimento
+
+while (ultrassom.value() > 130):
+    pass
+
+tank_drive.on(SpeedRPM(0), SpeedRPM(0))  # para movimento
+pegaBloco(garra1, garra2, tank_drive, 1, coresLavanderias, lavanderias,
+          sensorFrontal)  # função de aproximar e pegar o bloco
+tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(-50), 2)  # 360 para teste
+largaBloco(garra1, garra2, tank_drive)  # função que afasta e larga o bloco
+
+# Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
 # estão pretas. A disponibilidadeLavanderias (matriz 2x2) é iniciada com todas lavanderias disponíveis (True/1)
 
 # Lateral é uma "flag" para podermos nos localizar e fazer a verificação das matrizes de cor e disponibilidade
