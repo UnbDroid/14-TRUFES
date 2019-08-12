@@ -5,29 +5,71 @@ from achaCubo import *
 from garra import *
 
 garraE, garraD, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
+move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
+motorEsq = LargeMotor(OUTPUT_C)
+motorDir = LargeMotor(OUTPUT_D)
+print("AAAAAAAAAAAAA")
 lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
 comCubo = False
-while(comCubo == False):
-    descerLateral()
-    comCubo = verificaLinha()
+numCubos = 0
+linha = 0
+distCubo = 0
+lateral = 4
+atualiza = False
+distRe = 0
+N = 50
+while(numCubos < 4):
+	print("BBBBBBBBBBBB")
+	while(comCubo == False):
+		print("CCCCCCCCCCCC")
+		descerLateral()
+		linha += 1
+		comCubo = verificaLinha()
 
-tank_drive = MoveTank(OUTPUT_C, OUTPUT_D)
-ultrassom = UltrasonicSensor(INPUT_1) # Reinicializacao
-garra1 = Motor(OUTPUT_A) # garraE
-garra2 = Motor(OUTPUT_B) # garraD
-# Sem aplicar modo no leitor frontal
-sensorFrontal = ColorSensor(INPUT_2) # colorF
+	distCubo = ultrassom.value() - 30
+	motorEsq.reset()
+	motorDir.reset()
+	move_tank.on(SpeedPercent(40), SpeedPercent(40))  # Inicia movimento
 
-tank_drive.on(SpeedRPM(40), SpeedRPM(40))  # inicia movimento
+	while (ultrassom.value() > 130):
+		pass
+	distRodas = int((motorEsq.position + motorDir.position)/2)
+	motorEsq.reset()
+	motorDir.reset()
+	move_tank.on(SpeedPercent(0), SpeedPercent(0))  
+	comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF)  # Função de aproximar e pegar o bloco
+	#::Podemos fazer ele seguir colado na parede para ter mais espaço para virar no fim da arena
 
-while (ultrassom.value() > 130):
-    pass
+	while(comCubo):
+		move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
+		while(distRodas - distRe > 0):
+			distRe =  abs(int((motorEsq.position + motorDir.position)/2))
+		if(atualiza):
+			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1)
+			distRodas = 8*N - linha*N
+		else:
+			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1)
+			distRodas = linha*N
+		move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
+		distRe = 0
+		while(distRodas - distRe > 0):
+			distRe =  abs(int((motorEsq.position + motorDir.position)/2))
+		largaBloco(move_garra, move_tank)
+		comCubo = False
 
-tank_drive.on(SpeedRPM(0), SpeedRPM(0))  # para movimento
-pegaBloco(garra1, garra2, tank_drive, 1, coresLavanderias, lavanderias,
-          sensorFrontal)  # função de aproximar e pegar o bloco
-tank_drive.on_for_rotations(SpeedPercent(-50), SpeedPercent(-50), 2)  # 360 para teste
-largaBloco(garra1, garra2, tank_drive)  # função que afasta e larga o bloco
+	if(atualiza):
+		lateral -= 1
+		linha = 0
+	else:
+		move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2)
+		move_tank.on(SpeedPercent(40), SpeedPercent(40))
+		while((((linha-1)*N) - distRodas) > 0):
+			distRodas = int((motorEsq.position + motorDir.position)/2)
+		# Voltar a distância andada (baseada no quanto as rodas andaram até o cubo, no valor do ultrassom ou nas linhas passadas no chão)
+		# Virar de ré
+		# Alinhar com a lateral
+		# Andar até a lavanderia
+		# Terminar o movimento de acordo com a lateral
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
 # estão pretas. A disponibilidadeLavanderias (matriz 2x2) é iniciada com todas lavanderias disponíveis (True/1)

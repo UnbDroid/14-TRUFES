@@ -28,7 +28,7 @@ def descerLateral():
     colorD = ColorSensor(INPUT_4)
     colorE.mode = 'COL-COLOR'  # O sensor está vendo por cor (modo)
     colorD.mode = 'COL-COLOR'
-    move_tank.on(SpeedRPM(20), SpeedRPM(20))
+    move_tank.on(SpeedRPM(40), SpeedRPM(40))
 
     while True:
         # Filtro para cor de leitura #
@@ -39,11 +39,10 @@ def descerLateral():
             colorListE.append(colorE.value())
             colorListD.append(colorD.value())
             contador += 1
-        print("moda esquerda: ", mode(colorListE))
-        print("moda direita: ", mode(colorListD))
+        print("moda esquerda: 4", mode(colorListE))
+        print("moda direita: 5", mode(colorListD))
 
-        if (mode(colorListE) == COLOR_BLACK and mode(
-                colorListD) == COLOR_BLACK):  # Pensar em quando está em cima do bloco quadrado preto
+        if (mode(colorListE) == COLOR_BLACK or mode(colorListD) == COLOR_BLACK):  # Pensar em quando está em cima do bloco quadrado preto
             iniTime = time.clock()
             while ((time.clock() - iniTime) < tempo_centro_quadrado):
                 print(time.clock() - iniTime)

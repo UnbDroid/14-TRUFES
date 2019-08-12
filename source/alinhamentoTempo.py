@@ -36,18 +36,28 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive):
 			rightTime = time.clock()
 			#print(rightTime, "RIGHT")
 
-	if(leftTime > rightTime):
-		# Menor time = sair primeiro
-		print(leftTime-rightTime)
-		fixedTime = 2*(leftTime-rightTime+0.02)
-		tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2),fixedTime) 
+
+	if(leftTime - iniTime > 0.6):
+		#Encontrou linha lateral esquerda
+		tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2), 0.1) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
-	if(leftTime < rightTime):
-		# Menor time = sair primeiro
-		fixedTime = 2*(rightTime-leftTime+0.02)
-		print(rightTime-leftTime)
-		tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), fixedTime)        
+	elif(rightTime - iniTime > 0.6):
+		#Encontrou linha lateral direita
+		tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), 0.1) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
+	else:
+		if(leftTime > rightTime):
+			# Menor time = sair primeiro
+			print(leftTime-rightTime)
+			fixedTime = 2*(leftTime-rightTime+0.02)
+			tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2),fixedTime) 
+			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
+		if(leftTime < rightTime):
+			# Menor time = sair primeiro
+			print(rightTime-leftTime)
+			fixedTime = 2*(rightTime-leftTime+0.02)
+			tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), fixedTime)        
+			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 
 
 if __name__ == '__main__':

@@ -36,7 +36,6 @@ def iniciar():
     move_tank.on(SpeedRPM(20), SpeedRPM(20))
     
     while True:
-        
         # Filtrando o valor do ultrassom
         distancia = 0
         contador = 0
@@ -92,7 +91,7 @@ def iniciar():
                 coresLavanderias[1][1] = Branco
                 break
 
-        if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
+        if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
             alinhaTempo(colorE,colorD,20,move_tank)
 
     print("Preto = 0 | Branco = 1")
