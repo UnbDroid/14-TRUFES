@@ -4,7 +4,7 @@ from ev3dev2.sensor import *
 from ev3dev2.sensor.lego import *
 import time
 
-def alinhaTempo(sensorE, sensorD, velocidade, tank_drive):
+def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 
 	#Definindo motores
 	#tank_drive = MoveTank(OUTPUT_B, OUTPUT_D)
@@ -25,6 +25,8 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive):
 	sensorD.mode = 'COL-COLOR'
 
 	iniTime = time.clock()
+
+	velocidade = -velocidade if (re) else velocidade #Alinhamento ré vs frente
 
 	while((time.clock() - iniTime) < 0.7):
 		leftColor = sensorE.value()

@@ -12,9 +12,8 @@ COLOR_BLACK = 1
 COLOR_WHITE = 6
 
 #Disponibilidade
-Ativa = 2
-Livre = 1
-Ocupada = 0
+Livre = True
+Ocupada = False
 Atualiza = False
 
 def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
@@ -30,13 +29,13 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	if lateral == 1:
 		if coresLavanderias[0][0] == corBloco:
 			if lavanderias[0][0] == Livre:
-				lavanderias[0][0] = Ativa
+				lavanderias[0][0] = Ocupada
 				return True
 			else:
 				return False
 		else:
 			if lavanderias[1][0] == Livre:
-				lavanderias[1][0] = Ativa
+				lavanderias[1][0] = Ocupada
 				Atualiza = True
 				return True
 			else:
@@ -45,13 +44,13 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	elif lateral == 2:
 		if coresLavanderias[1][0] == corBloco:
 			if lavanderias[1][0] == Livre:
-				lavanderias[1][0] = Ativa
+				lavanderias[1][0] = Ocupada
 				return True
 			else:
 				return False
 		else:
 			if lavanderias[1][1] == Livre:
-				lavanderias[1][1] = Ativa
+				lavanderias[1][1] = Ocupada
 				Atualiza = True
 				return True
 			else:
@@ -59,13 +58,13 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	elif lateral == 3:
 		if coresLavanderias[1][1] == corBloco:
 			if lavanderias[1][1] == Livre:
-				lavanderias[1][1] = Ativa
+				lavanderias[1][1] = Ocupada
 				return True
 			else:
 				return False
 		else:
 			if lavanderias[0][1] == Livre:
-				lavanderias[0][1] = Ativa
+				lavanderias[0][1] = Ocupada
 				Atualiza = True
 				return True
 			else:
@@ -73,13 +72,13 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	elif lateral == 4: 
 		if coresLavanderias[0][1] == corBloco:
 			if lavanderias[0][1] == Livre:
-				lavanderias[0][1] = Ativa
+				lavanderias[0][1] = Ocupada
 				return True
 			else:
 				return False
 		else:
 			if lavanderias[0][0] == Livre:
-				lavanderias[0][0] = Ativa
+				lavanderias[0][0] = Ocupada
 				Atualiza = True
 				return True
 			else:
@@ -99,11 +98,13 @@ def pegaBloco(garra_drive, tank_drive,lateral, coresLavanderias, lavanderias, se
 		tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) 
 		garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Fecha garras
 		return False, Atualiza
+	garra_drive.off()
 
 def largaBloco(garra_drive, tank_drive):
 	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.25) # Abre garras
 	tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) # Ré com base em 125mm de distância do cubo
 	garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Fecha garras
+	garra_drive.off()
 
 if __name__ == '__main__':
 
