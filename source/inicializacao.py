@@ -15,7 +15,7 @@ COLOR_WHITE = 6
 #Disponibilidade
 Livre = True
 Ocupada = False
-
+N = 824
 
 def iniciar():
 	# Inicialização de motores
@@ -33,7 +33,7 @@ def iniciar():
 
 	coresLavanderias = [[Preto for i in range(2)] for j in range(2)] # Todas lavanderias iniciam pretas
 
-	move_tank.on(SpeedRPM(20), SpeedRPM(20))
+	move_tank.on(SpeedPercent(40), SpeedPercent(40))
 	
 	while True:
 		# Filtrando o valor do ultrassom

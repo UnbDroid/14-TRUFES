@@ -14,81 +14,89 @@ COLOR_WHITE = 6
 #Disponibilidade
 Livre = True
 Ocupada = False
-Atualiza = False
+
+N = 824
 
 def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	# Filtro de verificação da cor do cubo
 	cont = 0
 	corBloco = 0
+	Atualiza = False
 	while cont < 5:
 		corBloco += sensorFrontal.value()
+		print(corBloco)
 		cont +=1
-	corBloco = Preto if (int(corBloco/5) < 11) else Branco
+	print('Cor: ', corBloco)
+	corBloco = Preto if (int(corBloco/5) < 30) else Branco
+	print('Cor final: ', corBloco)
 	##########################################
 
 	if lateral == 1:
 		if coresLavanderias[0][0] == corBloco:
 			if lavanderias[0][0] == Livre:
 				lavanderias[0][0] = Ocupada
-				return True
+				Atualiza = True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 		else:
 			if lavanderias[1][0] == Livre:
 				lavanderias[1][0] = Ocupada
-				Atualiza = True
-				return True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 		
 	elif lateral == 2:
 		if coresLavanderias[1][0] == corBloco:
 			if lavanderias[1][0] == Livre:
 				lavanderias[1][0] = Ocupada
-				return True
+				Atualiza = True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 		else:
 			if lavanderias[1][1] == Livre:
 				lavanderias[1][1] = Ocupada
-				Atualiza = True
-				return True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 	elif lateral == 3:
 		if coresLavanderias[1][1] == corBloco:
 			if lavanderias[1][1] == Livre:
 				lavanderias[1][1] = Ocupada
-				return True
+				Atualiza = True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 		else:
 			if lavanderias[0][1] == Livre:
 				lavanderias[0][1] = Ocupada
-				Atualiza = True
-				return True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 	elif lateral == 4: 
 		if coresLavanderias[0][1] == corBloco:
 			if lavanderias[0][1] == Livre:
 				lavanderias[0][1] = Ocupada
-				return True
+				Atualiza = True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 		else:
 			if lavanderias[0][0] == Livre:
 				lavanderias[0][0] = Ocupada
-				Atualiza = True
-				return True
+				return True, Atualiza
 			else:
-				return False
+				return False, Atualiza
 
 def pegaBloco(garra_drive, tank_drive,lateral, coresLavanderias, lavanderias, sensorFrontal):
-	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.25) # Abre as garras
+	garra1 = MediumMotor(OUTPUT_A)
+	garra2 = MediumMotor(OUTPUT_B)	
+	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.3) # Abre as garras
 	tank_drive.on_for_rotations(SpeedPercent(40),SpeedPercent(40), 0.7) # Movimenta com base em 125mm de distância do cubo
 	sleep(0.5)
-	if(verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)):
+	verifica, Atualiza = verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)
+	if(verifica):
 		garra_drive.on(SpeedPercent(-10), SpeedPercent(10)) # Fecha garras continuamente
 		garra_drive.wait_until_not_moving()
 		garra_drive.off()
@@ -99,12 +107,18 @@ def pegaBloco(garra_drive, tank_drive,lateral, coresLavanderias, lavanderias, se
 		garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Fecha garras
 		return False, Atualiza
 	garra_drive.off()
+	garra1.reset()
+	garra2.reset()
 
 def largaBloco(garra_drive, tank_drive):
+	garra1 = MediumMotor(OUTPUT_A)
+	garra2 = MediumMotor(OUTPUT_B)
 	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.25) # Abre garras
 	tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) # Ré com base em 125mm de distância do cubo
 	garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Fecha garras
 	garra_drive.off()
+	garra1.reset()
+	garra2.reset()
 
 if __name__ == '__main__':
 
