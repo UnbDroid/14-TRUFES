@@ -21,9 +21,6 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 	leftColor = sensorE.value()
 	rightColor = sensorD.value()
 
-	sensorE.mode = 'COL-COLOR' #Muda de Luz para Cor
-	sensorD.mode = 'COL-COLOR'
-
 	iniTime = time.clock()
 
 	velocidade = -velocidade if (re) else velocidade #Alinhamento ré vs frente

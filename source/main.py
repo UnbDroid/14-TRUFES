@@ -25,10 +25,9 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 		distancia = ultrassom.value()
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
 			alinhaTempo(colorE, colorD, 40, move_tank, atualiza)
-
+	move_tank.off
 	if(atualiza):
-		#CODIGO DA VIRADA LEGAL
-		pass
+		sleep(9)
 
 	return
 
@@ -54,32 +53,37 @@ def controla():
 		move_tank.on(SpeedPercent(40), SpeedPercent(40))  # Inicia movimento
 
 		while (ultrassom.value() > 130):
-			pass
-
-		distRodas = int((motorEsq.position + motorDir.position)/2)
-		motorEsq.reset()
-		motorDir.reset()
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and ultrassom.value() > 310):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		move_tank.off
 		comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF)  # Função de aproximar e pegar o bloco
 		#::Podemos fazer ele seguir colado na parede para ter mais espaço para virar no fim da arena
+		distRodas = int((motorEsq.position + motorDir.position)/2)
 
+		motorEsq.reset()
+		motorDir.reset()
 		move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 		distRe = 0
-		while(distRodas - distRe > 0):
+		print('Tot:', distRodas)
+		while(distRodas - (distRe) > 0):
 			distRe =  abs(int((motorEsq.position + motorDir.position)/2))
+			print('Re', distRe)
 
 		if(comCubo):
-			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1)
+			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05)
 			vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
 			largaBloco(move_garra, move_tank)
 		else:
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05)
+
 
 		if(atualiza):
 			lateral -= 1
 			linha = 0
 		elif(comCubo):
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2.15)
+			motorEsq.reset()
+			motorDir.reset()
 			move_tank.on(SpeedPercent(40), SpeedPercent(40))
 			while((((linha-1)*N) - distRodas) > 0):
 				distRodas = int((motorEsq.position + motorDir.position)/2)
