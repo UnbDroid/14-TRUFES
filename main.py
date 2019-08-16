@@ -4,41 +4,58 @@ from inicializacao import iniciar
 from achaCubo import *
 from garra import *
 
+N = 824
+
 def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 
 	motorEsq.reset()
 	motorDir.reset()
 	distMot = 0
-
+	distancia = 1000
 	if(atualiza):
 		move_tank.on(SpeedPercent(-40), SpeedPercent(-40))
-		distTot = (8-linha)*N
+		distTot = (7-linha)*N
 	else:
 		move_tank.on(SpeedPercent(40), SpeedPercent(40))
-		distTot = N*linha
+		distTot = N*(linha-1) + 280
+	print('linha:', linha, 'dist:', distTot)
 
 	while((distTot - distMot) > 0):
 		distMot = abs(int((motorEsq.position + motorDir.position)/2))
+		distancia = ultrassom.value()
+		print("LAVANDA:", colorE.value())
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
 			alinhaTempo(colorE, colorD, 40, move_tank, atualiza)
-
+	move_tank.on(SpeedPercent(0), SpeedPercent(0))
 	if(atualiza):
-		#CODIGO DA VIRADA LEGAL
-		pass
+		print("SLEEPING")
+		sleep(9)
 
 	return
+def leArquivo():
+	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
+	arq = open('matriz.txt', 'r')
+	texto = arq.read().split()
+	lavanderias[0][0] = texto[0]
+	lavanderias[0][1] = texto[1]
+	lavanderias[1][0] = texto[2]
+	lavanderias[1][1] = texto[1]
+	arq.close()
+	return lavanderias
 
 
+def escreveArquivo():
+	arq = open('matriz.txt', 'w')
+	arq.write(str(lavanderias[0][0])+" "+str(lavanderias[0][1])+" "+str(lavanderias[1][0])+" "+str(lavanderias[1][1]))
+	arq.close()
 
-def controla()
+def controla():
 	comCubo = False
 	numCubos = 0
 	linha = 0
 	distCubo = 0
 	lateral = 4
 	atualiza = False
-	distRe = 0
-	N = 50
 
 	while(numCubos < 4):
 		while(comCubo == False):
@@ -51,33 +68,45 @@ def controla()
 		motorDir.reset()
 		move_tank.on(SpeedPercent(40), SpeedPercent(40))  # Inicia movimento
 
-		while (ultrassom.value() > 130):
-			pass
-
-		distRodas = int((motorEsq.position + motorDir.position)/2)
-		motorEsq.reset()
-		motorDir.reset()
+		while (ultrassom.value() > 110):
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and ultrassom.value() > 310):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		move_tank.on(SpeedPercent(0), SpeedPercent(0))
+		print("HERE1")
 		comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF)  # Função de aproximar e pegar o bloco
 		#::Podemos fazer ele seguir colado na parede para ter mais espaço para virar no fim da arena
+		distRodas = int((motorEsq.position + motorDir.position)/2)
 
-		while(comCubo):
-			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
-			while(distRodas - distRe > 0):
-				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
-			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1)
+		motorEsq.reset()
+		motorDir.reset()
+		move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
+		distRe = 0
+		print('Tot:', distRodas)
+		while(distRodas - (distRe) > 0):
+			distRe =  abs(int((motorEsq.position + motorDir.position)/2))
+			print('Re', distRe)
+
+		if(comCubo):
+			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05)
 			vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
 			largaBloco(move_garra, move_tank)
-			comCubo = False
+			escreveArquivo()
+		else:
+			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05)
+
 
 		if(atualiza):
 			lateral -= 1
 			linha = 0
-		else:
-			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2)
+		elif(comCubo):
+			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2.15)
+			motorEsq.reset()
+			motorDir.reset()
 			move_tank.on(SpeedPercent(40), SpeedPercent(40))
 			while((((linha-1)*N) - distRodas) > 0):
 				distRodas = int((motorEsq.position + motorDir.position)/2)
+			comCubo = False
+
 			# Voltar a distância andada (baseada no quanto as rodas andaram até o cubo, no valor do ultrassom ou nas linhas passadas no chão)
 			# Virar de ré
 			# Alinhar com a lateral
@@ -91,7 +120,10 @@ if __name__ == '__main__':
 	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
 	motorEsq = LargeMotor(OUTPUT_C)
 	motorDir = LargeMotor(OUTPUT_D)
-	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
+
+	lavanderias = leArquivo() # Pegando informações da matriz disponibilidade
+	
+
 	controla()
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
