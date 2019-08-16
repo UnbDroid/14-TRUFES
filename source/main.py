@@ -33,6 +33,22 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 
 	return
 
+def leArquivo():
+	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
+	arq = open('matriz.txt', 'r')
+	texto = arq.read().split()
+	lavanderias[0][0] = texto[0]
+	lavanderias[0][1] = texto[1]
+	lavanderias[1][0] = texto[2]
+	lavanderias[1][1] = texto[1]
+	arq.close()
+	return lavanderias
+
+
+def escreveArquivo():
+	arq = open('matriz.txt', 'w')
+	arq.write(str(lavanderias[0][0])+" "+str(lavanderias[0][1])+" "+str(lavanderias[1][0])+" "+str(lavanderias[1][1]))
+	arq.close()
 
 def controla():
 	comCubo = False
@@ -75,6 +91,7 @@ def controla():
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05)
 			vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
 			largaBloco(move_garra, move_tank)
+			escreveArquivo()
 		else:
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05)
 
@@ -104,7 +121,7 @@ if __name__ == '__main__':
 	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
 	motorEsq = LargeMotor(OUTPUT_C)
 	motorDir = LargeMotor(OUTPUT_D)
-	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
+	lavanderias = leArquivo() # Pegando informações da matriz disponibilidade
 	controla()
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
