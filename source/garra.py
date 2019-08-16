@@ -92,9 +92,18 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 def pegaBloco(garra_drive, tank_drive,lateral, coresLavanderias, lavanderias, sensorFrontal):
 	garra1 = MediumMotor(OUTPUT_A)
 	garra2 = MediumMotor(OUTPUT_B)	
-	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.27, block=True) # Abre as garras
-	time.sleep(1)
-	tank_drive.on_for_rotations(SpeedPercent(40),SpeedPercent(40), 0.55) # Movimenta com base em 125mm de distância do cubo
+	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.22, block=True) # Abre as garras
+	time.sleep(0.4)
+	motorDir = LargeMotor(OUTPUT_D)
+	distDir = motorDir.position
+	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
+	while((motorDir.position - distDir) < 340):
+		pass
+	distDir = motorDir.position
+	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))	
+	while((motorDir.position - distDir) < 15):
+		pass
+	tank_drive.on(SpeedPercent(0), SpeedPercent(0))
 	verifica, Atualiza = verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)
 	if(verifica):
 		garra_drive.on(SpeedPercent(-10), SpeedPercent(10)) # Fecha garras continuamente
