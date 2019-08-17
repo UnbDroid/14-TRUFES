@@ -6,6 +6,12 @@ from garra import *
 
 N = 824
 
+def filterultrassom(ultrassom):
+	valor = 0
+	for i in range(0, 10):
+		valor += ultrassom.value()
+	return int(valor/10)
+
 def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 
 	motorEsq.reset()
@@ -22,7 +28,7 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 
 	while((distTot - distMot) > 0):
 		distMot = abs(int((motorEsq.position + motorDir.position)/2))
-		distancia = ultrassom.value()
+		distancia = (filterultrassom(ultrassom))
 		print("LAVANDA:", colorE.value())
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and (distTot - distMot) > 500):
 			alinhaTempo(colorE, colorD, 40, move_tank, atualiza)
@@ -66,8 +72,8 @@ def controla(numCubos):
 		motorDir.reset()
 		move_tank.on(SpeedPercent(40), SpeedPercent(40))  # Inicia movimento
 
-		while (ultrassom.value() > 90):
-			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and ultrassom.value() > 310):
+		while ((filterultrassom(ultrassom)) > 90):
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and (filterultrassom(ultrassom)) > 310):
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		move_tank.on(SpeedPercent(0), SpeedPercent(0))
 		print("HERE1")
@@ -124,11 +130,97 @@ def lateralDisponivel(lavanderias):
 		lateral = 3
 	elif lavanderias[0][1] == 1 and lavanderias[0][0] == 1:
 		lateral = 4
+	elif lavanderias[0][0] == 1 and lavanderias[1][1] == 1:
+		lateral = 5
+	elif lavanderias[1][0] == 1 and lavanderias[0][1] == 1:
+		lateral = 5
 	else:
 		# Só existe uma lavanderia sem cubo
 		# chamar função de achar um cubo
 		lateral = 0
 	return lateral
+
+def gogo(disponibilidade, lateral):
+	if disponibilidade[0] == 1 and disponibilidade[1] == 1 and disponibilidade[2] == 1 and disponibilidade[3] == 1:
+		controla(0)
+	else:
+		if lateral == 0:
+			# uma lavanderia sem cubo
+			print('falta fazer')
+		elif lateral == 1:
+			# 180º
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+			move_tank.on(SpeedPercent(40), SpeedPercent(40))
+			while (filterultrassom(ultrassom)) >= 90:
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+					alinhaTempo(colorE, colorD, 40, move_tank, False)
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			# para na lavanderia da lavanderia 1 e vira para iniciar
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+
+		elif lateral == 2:
+			# 180º
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+			move_tank.on(SpeedPercent(40), SpeedPercent(40))
+			while (filterultrassom(ultrassom)) >= 90:
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+					alinhaTempo(colorE, colorD, 40, move_tank, False)
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			# chegou na lavanderia da lateral 2 (90º)
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+			
+			# subindo a lateral
+			move_tank.on(SpeedPercent(40), SpeedPercent(40))
+			while (filterultrassom(ultrassom)) >= 90:
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+					alinhaTempo(colorE, colorD, 40, move_tank, False)
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			# 180ºcv f hmjklmyjrvwt (ass: Bianca)
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+		
+		elif lateral == 3:
+			contLinha = 0
+			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+			# segue reto
+			move_tank.on(SpeedPercent(40), SpeedPercent(40))
+			while contLinha < 7:
+				if (filterultrassom(ultrassom)) <= 90:
+					#contornar
+					move_tank.on(SpeedPercent(0), SpeedPercent(0))
+					move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+					move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
+					move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+					move_tank.on(SpeedPercent(40), SpeedPercent(40))
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					contLinha += 1
+			# chegamos na lateral 3
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+			# direcionando para a lavanderia
+			move_tank.on(SpeedPercent(40), SpeedPercent(40))
+			while (filterultrassom(ultrassom)) >= 90:
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+					alinhaTempo(colorE, colorD, 40, move_tank, False)
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+
+		elif lateral == 4:
+			move_tank.on(SpeedPercent(40), SpeedPercent(40))
+			while (filterultrassom(ultrassom)) >= 90:
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+					alinhaTempo(colorE, colorD, 40, move_tank, False)
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			# chegou na lavanderia da lateral 4 (90º)
+			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+		elif lateral == 5:
+			# diagonal ocupada
+			print('falta fazer')			
+		
+		# após chegar na lateral reinicia suas funcionalidades
+		numCubos = disponibilidade.count(0)
+		controla(numCubos)
+
 
 if __name__ == '__main__':
 	garraE, garraD, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
@@ -136,17 +228,12 @@ if __name__ == '__main__':
 	motorEsq = LargeMotor(OUTPUT_C)
 	motorDir = LargeMotor(OUTPUT_D)
 	lavanderias, disponibilidade = leArquivo() # Pegando informações da matriz disponibilidade
-	if disponibilidade[0] == 1 and disponibilidade[1] == 1 and disponibilidade[2] == 1 and disponibilidade[3] == 1:
-		controla(0)
-	else:
-		numCubos = disponibilidade.count(0)
-		lateral = lateralDisponivel(lavanderias)
-		if lateral == 0:
-			#chamar função de procurar um cubo
-			print('uhu')
-		else:
-			#direcionar para a lateral
-			controla(numCubos)
+	lateral = lateralDisponivel(lavanderias)
+	gogo(disponibilidade, lateral)
+	
+
+
+
 
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
