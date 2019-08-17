@@ -42,7 +42,7 @@ def leArquivo():
 	lavanderias[1][1] = int(texto[1])
 	arq.close()
 	print(lavanderias)
-	return lavanderias
+	return lavanderias, texto
 
 
 def escreveArquivo():
@@ -50,9 +50,8 @@ def escreveArquivo():
 	arq.write(str(lavanderias[0][0])+" "+str(lavanderias[0][1])+" "+str(lavanderias[1][0])+" "+str(lavanderias[1][1]))
 	arq.close()
 
-def controla():
+def controla(numCubos):
 	comCubo = False
-	numCubos = 0
 	linha = 1
 	lateral = 4
 	atualiza = False
@@ -116,14 +115,39 @@ def controla():
 			# Terminar o movimento de acordo com a lateral
 	return
 
+def lateralDisponivel(lavanderias):
+	if lavanderias[0][0] == 1 and lavanderias[1][0] == 1:
+		lateral = 1
+	elif lavanderias[1][0] == 1 and lavanderias[1][1] == 1:
+		lateral = 2
+	elif lavanderias[1][1] == 1 and lavanderias[0][1] == 1:
+		lateral = 3
+	elif lavanderias[0][1] == 1 and lavanderias[0][0] == 1:
+		lateral = 4
+	else:
+		# Só existe uma lavanderia sem cubo
+		# chamar função de achar um cubo
+		lateral = 0
+	return lateral
 
 if __name__ == '__main__':
 	garraE, garraD, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
 	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
 	motorEsq = LargeMotor(OUTPUT_C)
 	motorDir = LargeMotor(OUTPUT_D)
-	lavanderias = leArquivo() # Pegando informações da matriz disponibilidade
-	controla()
+	lavanderias, disponibilidade = leArquivo() # Pegando informações da matriz disponibilidade
+	if disponibilidade[0] == 1 and disponibilidade[1] == 1 and disponibilidade[2] == 1 and disponibilidade[3] == 1:
+		controla(0)
+	else:
+		numCubos = disponibilidade.count(0)
+		lateral = lateralDisponivel(lavanderias)
+		if lateral == 0:
+			#chamar função de procurar um cubo
+			print('uhu')
+		else:
+			#direcionar para a lateral
+			controla(numCubos)
+
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
 # estão pretas. A disponibilidadeLavanderias (matriz 2x2) é iniciada com todas lavanderias disponíveis (True/1)
