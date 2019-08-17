@@ -1,8 +1,11 @@
 from ev3dev2.motor import *
+from ev3dev2.button import Button
+from ev3dev2.sound import Sound
 from ev3dev2.sensor.lego import *
 from inicializacao import iniciar
 from achaCubo import *
 from garra import *
+from ultimoBloco import ultimoBloco
 
 N = 824
 
@@ -12,8 +15,20 @@ def filterultrassom(ultrassom):
 		valor += ultrassom.value()
 	return int(valor/10)
 
-def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
+def drift(super)
+	#Se super for True, o robô vai dar drift de ré.
+	#Se não, ele faz a volta na lavanderia
+	move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
+	move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
+	if(super):
+		move_steering.on_for_rotations(-22, SpeedPercent(-50), 4.55)
+	else:
+		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
+		move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
 
+def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 	motorEsq.reset()
 	motorDir.reset()
 	distMot = 0
@@ -28,14 +43,13 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 
 	while((distTot - distMot) > 0):
 		distMot = abs(int((motorEsq.position + motorDir.position)/2))
-		distancia = (filterultrassom(ultrassom))
+		distancia = filterultrassom(ultrassom)
 		print("LAVANDA:", colorE.value())
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and (distTot - distMot) > 500):
 			alinhaTempo(colorE, colorD, 40, move_tank, atualiza)
 	move_tank.on(SpeedPercent(0), SpeedPercent(0))
 	if(atualiza):
-		move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
-		move_steering.on_for_rotations(-30, SpeedPercent(-50), 4)
+		drift()
 	return
 
 def leArquivo():
@@ -56,56 +70,98 @@ def escreveArquivo():
 	arq.write(str(lavanderias[0][0])+" "+str(lavanderias[0][1])+" "+str(lavanderias[1][0])+" "+str(lavanderias[1][1]))
 	arq.close()
 
-def controla(numCubos):
+def ultimoCubo(linha):
+	garra1 = MediumMotor(OUTPUT_A)
+	garra2 = MediumMotor(OUTPUT_B)
+	move_garra.on(SpeedPercent(10), SpeedPercent(-10)) # Abre garras continuamente
+	garra_drive.wait_until_not_moving()
+	garra_drive.off()
+
+	time.sleep(0.4)
+	distDir = motorDir.position
+	flag = True
+
+	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
+	while((motorDir.position - distDir) < 431):
+		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
+			print("Heh")
+			flag = False
+			distDir -= 100
+	tank_drive.on(SpeedPercent(0), SpeedPercent(0))
+	garra_drive.on(SpeedPercent(-10), SpeedPercent(10)) # Fecha garras continuamente
+	time.sleep(0.1)
+	garra_drive.wait_until_not_moving()
+	garra_drive.off()
+	ultimoBloco(linha, lavanderias, lateral, move_tank, int((motorEsq.position + motorDir.position)/2), move_garra)
+
+def controla():
 	comCubo = False
+	numCubos = 0
 	linha = 1
-	lateral = 4
 	atualiza = False
 
 	while(numCubos < 4):
 		while(comCubo == False):
 			descerLateral()
 			linha += 1
+			if(linha > 6): #Se chegar no final sem pegar o cubo 'atualiza', tem que virar e continuar de qualquer jeito
+				if(lateral == 4 and lavanderias [0][1] == 0):
+					drift(False)
+				elif(lavanderia == 3 and lavanderias [1][1] == 0):
+					drift(False)
+				elif(lavanderia == 2 and lavanderias [1][0] == 0):
+					drift(False)
+				elif(lavanderia == 1 and lavanderias [0][0] == 0):
+					drift(False)					
+				else: 
+					drift(True)
+				atualiza = True
+				break
 			comCubo = verificaLinha()
 
-		motorEsq.reset()
-		motorDir.reset()
-		move_tank.on(SpeedPercent(40), SpeedPercent(40))  # Inicia movimento
+		if(atualiza == False):
+			motorEsq.reset()
+			motorDir.reset()
+			move_tank.on(SpeedPercent(40), SpeedPercent(40))  # Inicia movimento
 
-		while ((filterultrassom(ultrassom)) > 90):
-			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and (filterultrassom(ultrassom)) > 310):
-				alinhaTempo(colorE, colorD, 40, move_tank, False)
-		move_tank.on(SpeedPercent(0), SpeedPercent(0))
-		print("HERE1")
-		comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF)  # Função de aproximar e pegar o bloco
-		#::Podemos fazer ele seguir colado na parede para ter mais espaço para virar no fim da arena
-		distRodas = int((motorEsq.position + motorDir.position)/2)
+			while (filterultrassom(ultrassom) > 90):
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and filterultrassom(ultrassom) > 310):
+					alinhaTempo(colorE, colorD, 40, move_tank, False)
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			print("HERE1")
+			if(numCubos == 3):
+				comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF)  # Função de aproximar e pegar o bloco
+			else:
+				ultimoCubo(linha)
+			#::Podemos fazer ele seguir colado na parede para ter mais espaço para virar no fim da arena
+			distRodas = int((motorEsq.position + motorDir.position)/2)
 
-		motorEsq.reset()
-		motorDir.reset()
-		move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
-		distRe = 0
-		print('Tot:', distRodas)
-		while(distRodas - (distRe) > 0):
-			distRe =  abs(int((motorEsq.position + motorDir.position)/2))
-			print('Re', distRe)
+			motorEsq.reset()
+			motorDir.reset()
+			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
+			distRe = 0
+			print('Tot:', distRodas)
+			while(distRodas - (distRe) > 0):
+				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
+				print('Re', distRe)
 
-		if(comCubo):
-			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05)
-			vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
-			numCubos += 1
-			largaBloco(move_garra, move_tank)
-			escreveArquivo()
-		else:
-			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05)
+			if(comCubo):
+				move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05)
+				vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
+				numCubos += 1
+				largaBloco(move_garra, move_tank)
+				escreveArquivo()
+			else:
+				move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05)
 
 
 		if(atualiza):
-			lateral -= 1
+			lateral = lateral - 1 if (lateral != 1) else 4
 			linha = 2
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2.1)
 			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
 			comCubo = verificaLinha()
+			atualiza = False
 		elif(comCubo):
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2.1)
 			motorEsq.reset()
@@ -114,11 +170,6 @@ def controla(numCubos):
 			while((((linha-1)*N) - distRodas) > 120):
 				distRodas = int((motorEsq.position + motorDir.position)/2)
 		comCubo = False
-			# Voltar a distância andada (baseada no quanto as rodas andaram até o cubo, no valor do ultrassom ou nas linhas passadas no chão)
-			# Virar de ré
-			# Alinhar com a lateral
-			# Andar até a lavanderia
-			# Terminar o movimento de acordo com a lateral
 	return
 
 def lateralDisponivel(lavanderias):
@@ -142,6 +193,7 @@ def lateralDisponivel(lavanderias):
 
 def gogo(disponibilidade, lateral):
 	if disponibilidade[0] == 1 and disponibilidade[1] == 1 and disponibilidade[2] == 1 and disponibilidade[3] == 1:
+		lateral = 4
 		controla(0)
 	else:
 		if lateral == 0:
@@ -196,6 +248,7 @@ def gogo(disponibilidade, lateral):
 					contLinha += 1
 			# chegamos na lateral 3
 			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 0.1)
 			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
 			# direcionando para a lavanderia
 			move_tank.on(SpeedPercent(40), SpeedPercent(40))
@@ -221,20 +274,22 @@ def gogo(disponibilidade, lateral):
 		numCubos = disponibilidade.count(0)
 		controla(numCubos)
 
-
 if __name__ == '__main__':
 	garraE, garraD, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
 	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
 	motorEsq = LargeMotor(OUTPUT_C)
 	motorDir = LargeMotor(OUTPUT_D)
+	btn = Button()
+	sound = Sound()
 	lavanderias, disponibilidade = leArquivo() # Pegando informações da matriz disponibilidade
+
+	while not btn.any(): # Espera o botão
+    	time.sleep(0.01)
+
+	sound.beep() #Beeep
+	
 	lateral = lateralDisponivel(lavanderias)
 	gogo(disponibilidade, lateral)
-	
-
-
-
-
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
 # estão pretas. A disponibilidadeLavanderias (matriz 2x2) é iniciada com todas lavanderias disponíveis (True/1)
