@@ -12,8 +12,8 @@ COLOR_BLACK = 1
 COLOR_WHITE = 6
 
 #Disponibilidade
-Livre = True
-Ocupada = False
+Livre = 1
+Ocupada = 0
 
 N = 824
 
@@ -27,7 +27,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 		print(corBloco)
 		cont +=1
 	print('Cor: ', corBloco)
-	corBloco = Preto if (int(corBloco/5) < 30) else Branco
+	corBloco = Preto if (int(corBloco/5) < 20) else Branco
 	print('Cor final: ', corBloco)
 	##########################################
 
@@ -91,14 +91,21 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 
 def pegaBloco(garra_drive, tank_drive,lateral, coresLavanderias, lavanderias, sensorFrontal):
 	garra1 = MediumMotor(OUTPUT_A)
-	garra2 = MediumMotor(OUTPUT_B)	
-	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.22, block=True) # Abre as garras
+	garra2 = MediumMotor(OUTPUT_B)
+	colorE = ColorSensor(INPUT_3)
+	colorD = ColorSensor(INPUT_4)
+	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.25, block=True) # Abre as garras
 	time.sleep(0.4)
 	motorDir = LargeMotor(OUTPUT_D)
 	distDir = motorDir.position
+	flag = True
+
 	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
-	while((motorDir.position - distDir) < 340):
-		pass
+	while((motorDir.position - distDir) < 431):
+		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
+			print("Heh")
+			flag = False
+			distDir -= 60
 	distDir = motorDir.position
 	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))	
 	while((motorDir.position - distDir) < 15):

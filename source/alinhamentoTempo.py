@@ -37,11 +37,11 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 			#print(rightTime, "RIGHT")
 
 
-	if(leftTime - iniTime > 0.65):
+	if(leftTime - iniTime > 0.5):
 		#Encontrou linha lateral esquerda
 		tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2), 0.1) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
-	elif(rightTime - iniTime > 0.65):
+	elif(rightTime - iniTime > 0.5):
 		#Encontrou linha lateral direita
 		tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), 0.1) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))

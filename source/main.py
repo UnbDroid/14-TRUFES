@@ -17,31 +17,31 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 		distTot = (7-linha)*N
 	else:
 		move_tank.on(SpeedPercent(40), SpeedPercent(40))
-		distTot = N*(linha-1) + 280
+		distTot = N*(linha-2) + 220
 	print('linha:', linha, 'dist:', distTot)
 
 	while((distTot - distMot) > 0):
 		distMot = abs(int((motorEsq.position + motorDir.position)/2))
 		distancia = ultrassom.value()
 		print("LAVANDA:", colorE.value())
-		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
+		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and (distTot - distMot) > 500):
 			alinhaTempo(colorE, colorD, 40, move_tank, atualiza)
 	move_tank.on(SpeedPercent(0), SpeedPercent(0))
 	if(atualiza):
-		print("SLEEPING")
-		sleep(9)
-
+		move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
+		move_steering.on_for_rotations(-30, SpeedPercent(-50), 4)
 	return
 
 def leArquivo():
 	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
 	arq = open('matriz.txt', 'r')
 	texto = arq.read().split()
-	lavanderias[0][0] = texto[0]
-	lavanderias[0][1] = texto[1]
-	lavanderias[1][0] = texto[2]
-	lavanderias[1][1] = texto[1]
+	lavanderias[0][0] = int(texto[0])
+	lavanderias[0][1] = int(texto[1])
+	lavanderias[1][0] = int(texto[2])
+	lavanderias[1][1] = int(texto[1])
 	arq.close()
+	print(lavanderias)
 	return lavanderias
 
 
@@ -53,8 +53,7 @@ def escreveArquivo():
 def controla():
 	comCubo = False
 	numCubos = 0
-	linha = 0
-	distCubo = 0
+	linha = 1
 	lateral = 4
 	atualiza = False
 
@@ -64,12 +63,11 @@ def controla():
 			linha += 1
 			comCubo = verificaLinha()
 
-		distCubo = ultrassom.value() - 30
 		motorEsq.reset()
 		motorDir.reset()
 		move_tank.on(SpeedPercent(40), SpeedPercent(40))  # Inicia movimento
 
-		while (ultrassom.value() > 110):
+		while (ultrassom.value() > 90):
 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and ultrassom.value() > 310):
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		move_tank.on(SpeedPercent(0), SpeedPercent(0))
@@ -90,6 +88,7 @@ def controla():
 		if(comCubo):
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05)
 			vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
+			numCubos += 1
 			largaBloco(move_garra, move_tank)
 			escreveArquivo()
 		else:
@@ -98,16 +97,18 @@ def controla():
 
 		if(atualiza):
 			lateral -= 1
-			linha = 0
+			linha = 2
+			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2.1)
+			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+			comCubo = verificaLinha()
 		elif(comCubo):
-			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2.15)
+			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),2.1)
 			motorEsq.reset()
 			motorDir.reset()
 			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			while((((linha-1)*N) - distRodas) > 0):
+			while((((linha-1)*N) - distRodas) > 120):
 				distRodas = int((motorEsq.position + motorDir.position)/2)
-			comCubo = False
-
+		comCubo = False
 			# Voltar a distância andada (baseada no quanto as rodas andaram até o cubo, no valor do ultrassom ou nas linhas passadas no chão)
 			# Virar de ré
 			# Alinhar com a lateral
