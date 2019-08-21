@@ -36,8 +36,10 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 			rightTime = time.clock()
 			#print(rightTime, "RIGHT")
 
-
-	if(leftTime - iniTime > 0.5):
+	if(((leftTime + rightTime) - iniTime*2) > 0.55 or abs(leftTime-rightTime) > 3):
+		print("WELP")
+		pass
+	elif(leftTime - iniTime > 0.5):
 		#Encontrou linha lateral esquerda
 		tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2), 0.1) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
@@ -50,13 +52,13 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 			# Menor time = sair primeiro
 			print('left', leftTime-rightTime)
 			fixedTime = 2*(leftTime-rightTime+0.03)
-			tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade),fixedTime) 
+			tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2),fixedTime) 
 			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 		if(leftTime < rightTime):
 			# Menor time = sair primeiro
 			print('right', rightTime-leftTime)
 			fixedTime = 2*(rightTime-leftTime+0.03)
-			tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2), fixedTime)        
+			tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), fixedTime)        
 			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 	print("OUT")
 

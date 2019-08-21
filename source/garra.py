@@ -15,7 +15,7 @@ COLOR_WHITE = 6
 Livre = 1
 Ocupada = 0
 
-N = 824
+N = 804
 
 def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	# Filtro de verificação da cor do cubo
@@ -27,7 +27,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 		print(corBloco)
 		cont +=1
 	print('Cor: ', corBloco)
-	corBloco = Preto if (int(corBloco/5) < 20) else Branco
+	corBloco = Preto if (int(corBloco/5) < 15) else Branco
 	print('Cor final: ', corBloco)
 	##########################################
 
@@ -89,28 +89,26 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 			else:
 				return False, Atualiza
 
-def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, sensorFrontal):
+def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, sensorFrontal, colorE, colorD):
 	garra1 = MediumMotor(OUTPUT_A)
 	garra2 = MediumMotor(OUTPUT_B)
-	colorE = ColorSensor(INPUT_3)
-	colorD = ColorSensor(INPUT_4)
+	motorDir = LargeMotor(OUTPUT_D)
 
-	garra_drive.on(SpeedPercent(10), SpeedPercent(-10)) # Abre garras continuamente
+	garra_drive.on(SpeedPercent(-10), SpeedPercent(10)) # Abre garras continuamente
 	time.sleep(0.1)
 	garra_drive.wait_until_not_moving()
 	garra_drive.off()
 
-	time.sleep(0.4)
-	motorDir = LargeMotor(OUTPUT_D)
 	distDir = motorDir.position
 	flag = True
 
 	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
 	while((motorDir.position - distDir) < 431):
+		print("Heh:", distDir)
+		print("He:", motorDir.position)
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
-			print("Heh")
 			flag = False
-			distDir -= 100
+			distDir -= 240
 	distDir = motorDir.position
 	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))	
 	while((motorDir.position - distDir) < 15):
@@ -118,7 +116,7 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 	tank_drive.on(SpeedPercent(0), SpeedPercent(0))
 	verifica, Atualiza = verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)
 	if(verifica):
-		garra_drive.on(SpeedPercent(-10), SpeedPercent(10)) # Fecha garras continuamente
+		garra_drive.on(SpeedPercent(10), SpeedPercent(-10)) # Fecha garras continuamente
 		time.sleep(0.1)
 		garra_drive.wait_until_not_moving()
 		garra_drive.off()
@@ -126,7 +124,7 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 	# Se não tiver que pegar, se afasta para deixar
 	else:
 		tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) 
-		garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Fecha garras
+		garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.32) # Fecha garras
 		garra_drive.off()
 		garra1.reset()
 		garra2.reset()
@@ -135,9 +133,9 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 def largaBloco(garra_drive, tank_drive):
 	garra1 = MediumMotor(OUTPUT_A)
 	garra2 = MediumMotor(OUTPUT_B)
-	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.25) # Abre garras
+	garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Abre garras
 	tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) # Ré com base em 125mm de distância do cubo
-	garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Fecha garras
+	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.35) # Fecha garras
 	garra_drive.off()
 	garra1.reset()
 	garra2.reset()

@@ -15,12 +15,11 @@ COLOR_WHITE = 6
 #Disponibilidade
 Livre = True
 Ocupada = False
-N = 824
+N = 804
 
 def iniciar():
 	# Inicialização de motores
-	garraE = Motor(OUTPUT_A)
-	garraD = Motor(OUTPUT_B)
+	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
 	move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
 
 	# Inicialização de sensores
@@ -49,8 +48,8 @@ def iniciar():
 
 		# Direcionando-se à primeira lavanderia
 
-		if(distancia <= 145):
-			move_tank.on_for_rotations(SpeedRPM(30), SpeedRPM(-30), 1.05)
+		if(distancia <= 125):
+			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
 
 			# Filtro para cor de leitura #
 			colorListE = list()
@@ -100,7 +99,7 @@ def iniciar():
 	print('inferior esquerdo: ', coresLavanderias[1][0])
 	print('inferior direito: ', coresLavanderias[1][1])
 
-	return garraE, garraD, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias
+	return move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias
 
 
 if __name__ == '__main__':
