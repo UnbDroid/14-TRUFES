@@ -27,7 +27,7 @@ def drift(super, move_tank):
 		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
 		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
 		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
-		move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+		move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 2.05)
 
 def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 	motorEsq.reset()
@@ -98,15 +98,20 @@ def controla(numCubos, lateral):
 	comCubo = False
 	linha = 1
 	atualiza = False
-
+	flag = 1
 	while(numCubos < 4):
 		while(comCubo == False):
-			descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD)
-			linha += 1
-			print(linha)
-			motorEsq.reset()
-			motorDir.reset()
-			comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
+			if lateral == 4 and lavanderias[0][0] == 0 and flag:
+				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
+				flag = 0
+				linha = 2
+			else:
+				descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD)
+				linha += 1
+				print(linha)
+				motorEsq.reset()
+				motorDir.reset()
+				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
 			if(linha == 7 and comCubo == False): #Se chegar no final sem pegar o cubo 'atualiza', tem que virar e continuar de qualquer jeito
 				print("Lava: ",lavanderias)
 				print("Lata: ",lateral)
@@ -185,24 +190,32 @@ def controla(numCubos, lateral):
 
 def lateralDisponivel(lavanderias):
 	if lavanderias[0][0] == 1 and lavanderias[1][0] == 1:
+		# lavanderias esquerda
 		lateral = 1
 	elif lavanderias[1][0] == 1 and lavanderias[1][1] == 1:
+		# lavanderias de baixo
 		lateral = 2
 	elif lavanderias[1][1] == 1 and lavanderias[0][1] == 1:
+		# lavanderias direita
 		lateral = 3
 	elif lavanderias[0][1] == 1 and lavanderias[0][0] == 1:
-		lateral = 4
+		# lavanderias de cima
+		# é mais possível achar um dos cubos que falta mas o intuitivo seria ir pra 4
+		lateral = 3
 	elif lavanderias[0][0] == 1 and lavanderias[1][1] == 1:
-		lateral = 5
+		# superior esquerda e inferior direita
+		# cuidado
+		lateral = 4
 	elif lavanderias[1][0] == 1 and lavanderias[0][1] == 1:
-		lateral = 5
+		# inferior esquerda e superior direita
+		lateral = 4
 	else:
 		# Só existe uma lavanderia sem cubo
 		# chamar função de achar um cubo
 		lateral = 0
 	return lateral
 
-def gogo(disponibilidade, lateral):
+def gogo(disponibilidade, lateral, move_tank):
 	if disponibilidade[0] == '1' and disponibilidade[1] == '1' and disponibilidade[2] == '1' and disponibilidade[3] == '1':
 		lateral = 4
 		controla(0, lateral)
@@ -239,6 +252,7 @@ def gogo(disponibilidade, lateral):
 					alinhaTempo(colorE, colorD, 40, move_tank, False)
 			move_tank.on(SpeedPercent(0), SpeedPercent(0))
 			# 180ºcv f hmjklmyjrvwt (ass: Bianca)
+			# chegou na [1][1]
 			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
 		
 		elif lateral == 3:
@@ -267,6 +281,7 @@ def gogo(disponibilidade, lateral):
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 					alinhaTempo(colorE, colorD, 40, move_tank, False)
 			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			# chegamos na [0][1]
 			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
 
 		elif lateral == 4:
@@ -274,12 +289,15 @@ def gogo(disponibilidade, lateral):
 			while (filterultrassom(ultrassom)) >= 90:
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 					alinhaTempo(colorE, colorD, 40, move_tank, False)
-			move_tank.on(SpeedPercent(0), SpeedPercent(0))
-			# chegou na lavanderia da lateral 4 (90º)
-			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
-		elif lateral == 5:
-			# diagonal ocupada
-			print('falta fazer')			
+			if lavanderias[0][0] == 0:
+				# desviando do cubo
+				move_tank.on(SpeedPercent(0), SpeedPercent(0))
+				move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+				drift(False, move_tank)
+			else:
+				move_tank.on(SpeedPercent(0), SpeedPercent(0))
+				# chegou na lavanderia da lateral 4 (90º)
+				move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)		
 		
 		# após chegar na lateral reinicia suas funcionalidades
 		numCubos = disponibilidade.count(0)
@@ -300,7 +318,7 @@ if __name__ == '__main__':
 	
 	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
 	lateral = lateralDisponivel(lavanderias)
-	gogo(disponibilidade, lateral)
+	gogo(disponibilidade, lateral, move_tank)
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
 # estão pretas. A disponibilidadeLavanderias (matriz 2x2) é iniciada com todas lavanderias disponíveis (True/1)
