@@ -103,12 +103,12 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 	flag = True
 
 	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
-	while((motorDir.position - distDir) < 431):
+	while((motorDir.position - distDir) < 360):
 		print("Heh:", distDir)
 		print("He:", motorDir.position)
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
 			flag = False
-			distDir -= 240
+			distDir -= 100
 	distDir = motorDir.position
 	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))	
 	while((motorDir.position - distDir) < 15):
