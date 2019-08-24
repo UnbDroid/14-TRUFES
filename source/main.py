@@ -211,8 +211,9 @@ def lateralDisponivel(lavanderias):
 		lateral = 4
 	else:
 		# Só existe uma lavanderia sem cubo
+		# ir para lateral 4 e começar a procurar um cubo
 		# chamar função de achar um cubo
-		lateral = 0
+		lateral = 4
 	return lateral
 
 def gogo(disponibilidade, lateral, move_tank):
@@ -220,10 +221,7 @@ def gogo(disponibilidade, lateral, move_tank):
 		lateral = 4
 		controla(0, lateral)
 	else:
-		if lateral == 0:
-			# uma lavanderia sem cubo
-			print('falta fazer')
-		elif lateral == 1:
+		if lateral == 1:
 			# 180º
 			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
 			move_tank.on(SpeedPercent(40), SpeedPercent(40))
