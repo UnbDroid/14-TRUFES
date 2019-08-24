@@ -2,6 +2,7 @@ from ev3dev2.motor import *
 from ev3dev2.sensor import *
 from ev3dev2.sensor.lego import *
 from statistics import mode
+from support import *
 from alinhamentoTempo import alinhaTempo
 
 #Definindo o nome das cores da matriz de cores
@@ -17,21 +18,134 @@ Livre = True
 Ocupada = False
 N = 804
 
-def iniciar():
-	# Inicialização de motores
-	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
-	move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
 
-	# Inicialização de sensores
-	ultrassom = UltrasonicSensor(INPUT_1)
-	colorF = ColorSensor(INPUT_2)
-	colorE = ColorSensor(INPUT_3)
-	colorD = ColorSensor(INPUT_4)
-	colorE.mode = 'COL-COLOR'
-	colorD.mode = 'COL-COLOR'
+def leArquivo():
+	coresLavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam brancas
+	arq = open('cores.txt', 'r')
+	texto = arq.read().split()
+	coresLavanderias[0][0] = int(texto[0])
+	coresLavanderias[0][1] = int(texto[1])
+	coresLavanderias[1][0] = int(texto[2])
+	coresLavanderias[1][1] = int(texto[3])
+	arq.close()
+	return coresLavanderias
 
-	coresLavanderias = [[Preto for i in range(2)] for j in range(2)] # Todas lavanderias iniciam pretas
+def escreveArquivo(coresLavanderias):
+	arq = open('cores.txt', 'w')
+	arq.write(str(coresLavanderias[0][0])+" "+str(coresLavanderias[0][1])+" "+str(coresLavanderias[1][0])+" "+str(coresLavanderias[1][1]))
+	arq.close()
 
+def lateralDisponivel(lavanderias):
+	if lavanderias[0][0] == 1 and lavanderias[1][0] == 1:
+		# lavanderias esquerda
+		lateral = 1
+	elif lavanderias[1][0] == 1 and lavanderias[1][1] == 1:
+		# lavanderias de baixo
+		lateral = 2
+	elif lavanderias[1][1] == 1 and lavanderias[0][1] == 1:
+		# lavanderias direita
+		lateral = 3
+	elif lavanderias[0][1] == 1 and lavanderias[0][0] == 1:
+		# lavanderias de cima
+		# é mais possível achar um dos cubos que falta mas o intuitivo seria ir pra 4
+		lateral = 3
+	elif lavanderias[0][0] == 1 and lavanderias[1][1] == 1:
+		# superior esquerda e inferior direita
+		# cuidado
+		lateral = 4
+	elif lavanderias[1][0] == 1 and lavanderias[0][1] == 1:
+		# inferior esquerda e superior direita
+		lateral = 4
+	else:
+		# Só existe uma lavanderia sem cubo
+		# ir para lateral 4 e começar a procurar um cubo
+		# chamar função de achar um cubo
+		lateral = 4
+	return lateral
+
+def reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, colorE, colorD):
+	if lateral == 1:
+		# 180º
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+		move_tank.on(SpeedPercent(40), SpeedPercent(40))
+		while (filterultrassom(ultrassom)) >= 90:
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+		move_tank.on(SpeedPercent(0), SpeedPercent(0))
+		# para na lavanderia da lavanderia 1 e vira para iniciar
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+
+	elif lateral == 2:
+		# 180º
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+		move_tank.on(SpeedPercent(40), SpeedPercent(40))
+		while (filterultrassom(ultrassom)) >= 90:
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+		move_tank.on(SpeedPercent(0), SpeedPercent(0))
+		# chegou na lavanderia da lateral 2 (90º)
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+		
+		# subindo a lateral
+		move_tank.on(SpeedPercent(40), SpeedPercent(40))
+		while (filterultrassom(ultrassom)) >= 90:
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+		move_tank.on(SpeedPercent(0), SpeedPercent(0))
+		# 180ºcv f hmjklmyjrvwt (ass: Bianca)
+		# chegou na [1][1]
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+	
+	elif lateral == 3:
+		contLinha = 0
+		move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+		# segue reto
+		move_tank.on(SpeedPercent(40), SpeedPercent(40))
+		while contLinha < 7:
+			if (filterultrassom(ultrassom)) <= 90:
+				#contornar
+				move_tank.on(SpeedPercent(0), SpeedPercent(0))
+				move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+				move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
+				move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+				move_tank.on(SpeedPercent(40), SpeedPercent(40))
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+				contLinha += 1
+		# chegamos na lateral 3
+		move_tank.on(SpeedPercent(0), SpeedPercent(0))
+		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 0.1)
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+		# direcionando para a lavanderia
+		move_tank.on(SpeedPercent(40), SpeedPercent(40))
+		while (filterultrassom(ultrassom)) >= 90:
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+		move_tank.on(SpeedPercent(0), SpeedPercent(0))
+		# chegamos na [0][1]
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
+
+	elif lateral == 4:
+		move_tank.on(SpeedPercent(40), SpeedPercent(40))
+		while (filterultrassom(ultrassom)) >= 90:
+			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+		if lavanderias[0][0] == 0:
+			# desviando do cubo
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+			drift(False, move_tank)
+		else:
+			move_tank.on(SpeedPercent(0), SpeedPercent(0))
+			# chegou na lavanderia da lateral 4 (90º)
+			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)		
+	
+	# após chegar na lateral reinicia suas funcionalidades
+	numCubos = disponibilidade.count(0)
+	coresLavanderias = leArquivo()
+	return numCubos, coresLavanderias
+
+def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 	move_tank.on(SpeedPercent(40), SpeedPercent(40))
 	
 	while True:
@@ -93,16 +207,31 @@ def iniciar():
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
 			alinhaTempo(colorE, colorD, 40, move_tank, False)
 
-	print("Preto = 0 | Branco = 1")
-	print('Superior esquerdo: ', coresLavanderias[0][0])
-	print('Superior direito: ', coresLavanderias[0][1])
-	print('inferior esquerdo: ', coresLavanderias[1][0])
-	print('inferior direito: ', coresLavanderias[1][1])
+	escreveArquivo(coresLavanderias)
+	return coresLavanderias
 
-	return move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias
+def setRobot(lavanderias, disponibilidade):
+	# Inicialização de motores
+	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
+	move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
 
+	# Inicialização de sensores
+	ultrassom = UltrasonicSensor(INPUT_1)
+	colorF = ColorSensor(INPUT_2)
+	colorE = ColorSensor(INPUT_3)
+	colorD = ColorSensor(INPUT_4)
+	colorE.mode = 'COL-COLOR'
+	colorD.mode = 'COL-COLOR'
 
-if __name__ == '__main__':
+	numCubos = 0
+	coresLavanderias = [[Preto for i in range(2)] for j in range(2)] # Todas lavanderias iniciam pretas
+ ##
 
-	garraE, garraD, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
-
+	if disponibilidade[0] == '1' and disponibilidade[1] == '1' and disponibilidade[2] == '1' and disponibilidade[3] == '1':
+		lateral = 4
+		coresLavanderias = iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias)
+	else:
+		lateral = lateralDisponivel(lavanderias)
+		numCubos, coresLavanderias = reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, colorE, colorD)
+	
+	return move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos

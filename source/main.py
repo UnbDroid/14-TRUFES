@@ -2,32 +2,13 @@ from ev3dev2.motor import *
 from ev3dev2.button import Button
 from ev3dev2.sound import Sound
 from ev3dev2.sensor.lego import *
-from inicializacao import iniciar
+from inicializacao import setRobot
 from achaCubo import *
 from garra import *
 from ultimoBloco import ultimoBloco
+from support import *
 
 N = 804
-
-def filterultrassom(ultrassom):
-	valor = 0
-	for i in range(0, 5):
-		valor += ultrassom.value()
-	print("VAL:", valor/5)
-	return int(valor/5)
-
-def drift(super, move_tank):
-	#Se super for True, o robô vai dar drift de ré.
-	#Se não, ele faz a volta na lavanderia
-	move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
-	if(super):
-		move_steering.on_for_rotations(22, SpeedPercent(-50), 4.45)
-		move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 0.7)
-	else:
-		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
-		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
-		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
-		move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 2.05)
 
 def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 	motorEsq.reset()
@@ -216,91 +197,6 @@ def lateralDisponivel(lavanderias):
 		lateral = 4
 	return lateral
 
-def gogo(disponibilidade, lateral, move_tank):
-	if disponibilidade[0] == '1' and disponibilidade[1] == '1' and disponibilidade[2] == '1' and disponibilidade[3] == '1':
-		lateral = 4
-		controla(0, lateral)
-	else:
-		if lateral == 1:
-			# 180º
-			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
-			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			while (filterultrassom(ultrassom)) >= 90:
-				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
-			move_tank.on(SpeedPercent(0), SpeedPercent(0))
-			# para na lavanderia da lavanderia 1 e vira para iniciar
-			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
-
-		elif lateral == 2:
-			# 180º
-			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
-			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			while (filterultrassom(ultrassom)) >= 90:
-				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
-			move_tank.on(SpeedPercent(0), SpeedPercent(0))
-			# chegou na lavanderia da lateral 2 (90º)
-			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
-			
-			# subindo a lateral
-			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			while (filterultrassom(ultrassom)) >= 90:
-				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
-			move_tank.on(SpeedPercent(0), SpeedPercent(0))
-			# 180ºcv f hmjklmyjrvwt (ass: Bianca)
-			# chegou na [1][1]
-			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
-		
-		elif lateral == 3:
-			contLinha = 0
-			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
-			# segue reto
-			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			while contLinha < 7:
-				if (filterultrassom(ultrassom)) <= 90:
-					#contornar
-					move_tank.on(SpeedPercent(0), SpeedPercent(0))
-					move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
-					move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
-					move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
-					move_tank.on(SpeedPercent(40), SpeedPercent(40))
-				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
-					contLinha += 1
-			# chegamos na lateral 3
-			move_tank.on(SpeedPercent(0), SpeedPercent(0))
-			move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 0.1)
-			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
-			# direcionando para a lavanderia
-			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			while (filterultrassom(ultrassom)) >= 90:
-				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
-			move_tank.on(SpeedPercent(0), SpeedPercent(0))
-			# chegamos na [0][1]
-			move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 2.10)
-
-		elif lateral == 4:
-			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			while (filterultrassom(ultrassom)) >= 90:
-				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
-			if lavanderias[0][0] == 0:
-				# desviando do cubo
-				move_tank.on(SpeedPercent(0), SpeedPercent(0))
-				move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
-				drift(False, move_tank)
-			else:
-				move_tank.on(SpeedPercent(0), SpeedPercent(0))
-				# chegou na lavanderia da lateral 4 (90º)
-				move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)		
-		
-		# após chegar na lateral reinicia suas funcionalidades
-		numCubos = disponibilidade.count(0)
-		controla(numCubos, lateral)
-
 if __name__ == '__main__':
 	motorEsq = LargeMotor(OUTPUT_C)
 	motorDir = LargeMotor(OUTPUT_D)
@@ -314,9 +210,8 @@ if __name__ == '__main__':
 
 	sound.beep() #Beeep
 	
-	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias = iniciar()
-	lateral = lateralDisponivel(lavanderias)
-	gogo(disponibilidade, lateral, move_tank)
+	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos = setRobot(lavanderias, disponibilidade)
+	controla(numCubos, lateral)
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
 # estão pretas. A disponibilidadeLavanderias (matriz 2x2) é iniciada com todas lavanderias disponíveis (True/1)
