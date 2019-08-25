@@ -20,28 +20,31 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 	motorEsq.reset()
 	motorDir.reset()
 	distMot = 0
-	distancia = 1000
+
 	if(atualiza):
-		#move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), 0.1)
+		# Vai até a lavanderia da próxima lateral
 		move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL))
-		distTot = (7-linha)*N
+		distTot = (7-linha)*N # Distancia a ser andada, pela linha atual até a última linha
 	else:
+		# Vai até a lavanderia de início da lateral
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
-		distTot = N*(linha-2) + 220
+		distTot = N*(linha-2) + 220 # Distancia a ser andada, pela linha atual até o começo
 	
 
 	while((distTot - distMot) > 0):
-		distMot = abs(int((motorEsq.position + motorDir.position)/2))
-		distancia = filterultrassom(ultrassom)
+		distMot = abs(int((motorEsq.position + motorDir.position)/2)) # Média entre as distâncias andadas por cada motor
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and (distTot - distMot) > 400):
+			# Alinha
 			alinhaTempo(colorE, colorD, 40, move_tank, atualiza)
 	move_tank.on(STOP, STOP)
 	if(atualiza):
-		drift(True, move_tank, move_steering)
+		drift(True, move_tank, move_steering) # Super drift
 	return
 
 def leArquivo():
 	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
+	# Lê uma linha com 4 inteiros e coloca na matriz de disponibilidade
+	# 1 é livre e 0 é ocupado
 	arq = open('matriz.txt', 'r')
 	texto = arq.read().split()
 	lavanderias[0][0] = int(texto[0])
@@ -50,12 +53,14 @@ def leArquivo():
 	lavanderias[1][1] = int(texto[3])
 	arq.close()
 	print(lavanderias)
+	# Retorna uma matriz com a relação da disponibilidade das lavanderias na arena
 	return lavanderias, texto
 
 
 def escreveArquivo():
 	arq = open('matriz.txt', 'w')
 	arq.write(str(lavanderias[0][0])+" "+str(lavanderias[0][1])+" "+str(lavanderias[1][0])+" "+str(lavanderias[1][1]))
+	# Registra a matriz de disponibilidade no arquivo para atualização
 	arq.close()
 
 def ultimoCubo(linha, move_garra, motorDir):
@@ -69,39 +74,41 @@ def ultimoCubo(linha, move_garra, motorDir):
 	flag = True
 
 	move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
-	while((motorDir.position - distDir) < 431):
-		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
-			
+
+	# Anda até chegar no cubo
+	while((motorDir.position - distDir) < 360):
+		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):		
 			flag = False
-			distDir -= 100
+			distDir -= 100 # Se entrar no quadrado, andar menos
 	move_tank.on(STOP, STOP)
 	move_garra.on(SpeedPercent(10), SpeedPercent(-10)) # Fecha garras continuamente
 	time.sleep(0.1)
 	move_garra.wait_until_not_moving()
 	move_garra.off()
+	# Chama a função para deixar o último bloco
 	ultimoBloco(linha, lavanderias, lateral, move_tank, int((motorEsq.position + motorDir.position)/2), move_garra, motorDir)
 
 def controla(numCubos, lateral):
-	comCubo = False
-	linha = 1
+	comCubo = False # Inicia sem cubo
+	linha = 1 # As linha são numeradas de 1 a 8
 	atualiza = False
-	flag = 1
+	flag = 1 # Controle da situação de reinicialização
+
 	while(numCubos < 4):
 		while(comCubo == False):
-			if lateral == 4 and lavanderias[0][0] == 0 and flag:
+			if(lateral == 4 and lavanderias[0][0] == 0 and flag):
 				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
 				flag = 0
 				linha = 2
 			else:
 				descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD)
 				linha += 1
-				
+				flag = 0
 				motorEsq.reset()
 				motorDir.reset()
-				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
-			if(linha == 7 and comCubo == False): #Se chegar no final sem pegar o cubo 'atualiza', tem que virar e continuar de qualquer jeito
-				
-				
+				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha) # Verifica se existe cubo na linha
+			if(linha == 7 and comCubo == False): # Se chegar no final sem pegar o cubo 'atualiza', tem que virar e continuar de qualquer jeito
+				# Verifica se é necessário desviar de um cubo na lavanderia
 				if(lateral == 4 and lavanderias [0][1] == 0):
 					drift(False, move_tank, move_steering)
 				elif(lateral == 3 and lavanderias [1][1] == 0):
@@ -111,28 +118,27 @@ def controla(numCubos, lateral):
 				elif(lateral == 1 and lavanderias [0][0] == 0):
 					drift(False, move_tank, move_steering)
 				else:
-					
 					move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
 					drift(True, move_tank, move_steering)
-				atualiza = True
+				atualiza = True # Mudou de lateral
 				break
 			
-
+		# Se não mudou de lateral no fim do movimento:
 		if(atualiza == False):
 			move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))  # Inicia movimento
 			ultraDist = filterultrassom(ultrassom)
 			while (ultraDist > 120):
 				ultraDist = filterultrassom(ultrassom)
-				
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and filterultrassom(ultrassom) > 310):
+					# Alinha
 					alinhaTempo(colorE, colorD, 40, move_tank, False)
 			move_tank.on(STOP, STOP)
 			
 			if(numCubos < 3):
 				comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF, colorE, colorD)  # Função de aproximar e pegar o bloco
 			else:
+				# Vai pra configuração final
 				ultimoCubo(linha, move_garra, motorDir)
-			#::Podemos fazer ele seguir colado na parede para ter mais espaço para virar no fim da arena
 			distRodas = int((motorEsq.position + motorDir.position)/2)
 
 			motorEsq.reset()
@@ -140,36 +146,45 @@ def controla(numCubos, lateral):
 			move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL)) # Dando ré
 			distRe = 0
 			
-			while(distRodas - (distRe) > 60):
+			while(distRodas - distRe > 60):
+				# Da ré até chegar na parede de novo
 				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distRodas - (distRe) > 500):
+					# Alinha
 					alinhaTempo(colorE, colorD, 40, move_tank, True)
 
 			if(comCubo):
+				# Se estiver com cubo, tem que levar até uma lavanderia
 				move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT),ROT90)
+				# A lavanderia destino é definida pela variável 'atualiza'
 				vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
 				numCubos += 1
 				largaBloco(move_garra, move_tank)
-				escreveArquivo()
+				escreveArquivo() # Atualiza a matriz de disponibilidade
 			else:
+				# Sem cubo, só virar pra continuar normal
 				move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
 
 
 		if(atualiza):
-			lateral = lateral - 1 if (lateral != 1) else 4
-			linha = 2
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT180)
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
-			comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
+			# Está em uma nova lateral, reconfigurar o movimento
+			lateral = lateral - 1 if (lateral != 1) else 4 # Rotação anti-horária de laterais
+			linha = 2 # Sempre vai começar na linha 2
+			move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # Vira pra arena
+			comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha) # Aproveita pra procurar um cubo na linha
 			atualiza = False
 		elif(comCubo):
+			# Deixou um cubo, mas continua na mesma lateral
 			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT180)
 			motorEsq.reset()
 			motorDir.reset()
 			move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
+			# Anda até a lateral que achou o cubo
 			while((((linha-2)*N) - distRodas) > 10):
+				# Como ao deixar o cubo ele se encontra na linha '2', precisa basear a distancia a ser andada nisso
 				distRodas = int((motorEsq.position + motorDir.position)/2)
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and filterultrassom(ultrassom) > 310):
+					# Alinha, enquanto longe da parede
 					alinhaTempo(colorE, colorD, 40, move_tank, False)
 			comCubo = False
 			linha -= 1

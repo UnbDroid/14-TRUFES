@@ -38,7 +38,7 @@ def leArquivo():
 	coresLavanderias[1][0] = int(texto[2])
 	coresLavanderias[1][1] = int(texto[3])
 	arq.close()
-	# Retorna uma matriz com a relação das cores das matrizes na arena
+	# Retorna uma matriz com a relação das cores das lavanderias na arena
 	return coresLavanderias
 
 def escreveArquivo(coresLavanderias):
