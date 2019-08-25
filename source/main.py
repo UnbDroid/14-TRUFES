@@ -189,7 +189,7 @@ if __name__ == '__main__':
 	sound.beep() #Beeep
 	
 	move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
-	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos = setRobot(lavanderias, disponibilidade)
+	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos, move_steering = setRobot(lavanderias, disponibilidade)
 	controla(numCubos, lateral)
 
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente

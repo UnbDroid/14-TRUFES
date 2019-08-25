@@ -75,66 +75,66 @@ def lateralDisponivel(lavanderias):
 		lateral = 4
 	return lateral
 
-def reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, colorE, colorD):
+def reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, colorE, colorD, move_steering):
 	if lateral == 1:
-		# 180º
-		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180)
+		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180) # 180º direita
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-				alinhaTempo(colorE, colorD, 40, move_tank, False)
+				alinhaTempo(colorE, colorD, 40, move_tank, False) # Alinhamento
 		move_tank.on(STOP, STOP)
 		# para na lavanderia da lavanderia 1 e vira para iniciar
-		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180)
+		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180) # 180º direita
 
 	elif lateral == 2:
-		# 180º
-		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180)
+		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180) # 180º direita
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				# Alinhamento
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		move_tank.on(STOP, STOP)
-		# chegou na lavanderia da lateral 2 (90º)
-		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
+		# Chegou na lavanderia da lateral 2 (90º)
+		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # 90º direita
 		
-		# subindo a lateral
+		# Subindo a lateral
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				# Alinhamento
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		move_tank.on(STOP, STOP)
-		# 180ºcv f hmjklmyjrvwt (ass: Bianca)
-		# chegou na [1][1]
-		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180)
+		# Chegou na [1][1]
+		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180) # 180º direita
 	
 	elif lateral == 3:
 		contLinha = 0
 		move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
-		# segue reto
+		# Segue reto
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 		while contLinha < 7:
 			if (filterultrassom(ultrassom)) <= DISTPAREDE:
-				#contornar
+				# Contornar cubo
 				move_tank.on(STOP, STOP)
 				move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
 				move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), QUADRADO)
 				move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
 				move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
+				# Alinhamento
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 				contLinha += 1
-		# chegamos na lateral 3
+		# Chegamos na lateral 3
 		move_tank.on(STOP, STOP)
 		move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.1)
-		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
-		# direcionando para a lavanderia
+		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # 90º direita
+		# Direcionando para a lavanderia
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		move_tank.on(STOP, STOP)
-		# chegamos na [0][1]
+		# Chegamos na [0][1]
 		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180)
 
 	elif lateral == 4:
@@ -143,16 +143,16 @@ def reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, color
 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 		if lavanderias[0][0] == 0:
-			# desviando do cubo
+			# Desviando do cubo
 			move_tank.on(STOP, STOP)
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
-			drift(False, move_tank)
+			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90) # 90º esquerda
+			drift(False, move_tank, move_steering)
 		else:
 			move_tank.on(STOP, STOP)
-			# chegou na lavanderia da lateral 4 (90º)
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)		
+			# Chegou na lavanderia da lateral 4 (90º)
+			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)	# 90º esquerda
 	
-	# após chegar na lateral reinicia suas funcionalidades
+	# Após chegar na lateral reinicia suas funcionalidades
 	numCubos = disponibilidade.count(0)
 	coresLavanderias = leArquivo()
 	return numCubos, coresLavanderias
@@ -165,17 +165,12 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 		distancia = 0
 		contador = 0
 
-		while(contador < 5):
-			distancia += ultrassom.value()
-			contador += 1
-		distancia = int(distancia/5)
+		distancia = filterultrassom(ultrassom)
 
-		
-
-		# Direcionando-se à primeira lavanderia
+		# Direcionando-se à primeira lavanderia ([0][0])
 
 		if(distancia <= 125):
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
+			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90) # 90º esquerda
 
 			# Filtro para cor de leitura #
 			colorListE = list()
@@ -186,8 +181,6 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 				colorListD.append(colorD.value())
 				contador += 1
 			
-			
-
 			if mode(colorListE) == COLOR_WHITE:
 				corEsq = COLOR_WHITE
 			else:
@@ -196,12 +189,10 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 				corDir = COLOR_WHITE
 			else:
 				corDir = COLOR_BLACK
+
 			############################ Finalizando filtro ############################
 
-			# Definindo a matriz de cores tendo em vista que ela foi iniciada totalmente preta
-			
-			
-			
+			# Definindo a matriz de cores tendo em vista que ela foi iniciada totalmente preta	
 
 			# Preto
 			if(corEsq == corDir and corEsq != COLOR_WHITE):
@@ -217,6 +208,7 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 				break
 
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
+			# Alinhamento
 			alinhaTempo(colorE, colorD, 40, move_tank, False)
 
 	escreveArquivo(coresLavanderias)
@@ -226,6 +218,7 @@ def setRobot(lavanderias, disponibilidade):
 	# Inicialização de motores
 	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
 	move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
+	move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
 
 	# Inicialização de sensores
 	ultrassom = UltrasonicSensor(INPUT_1)
@@ -238,12 +231,13 @@ def setRobot(lavanderias, disponibilidade):
 	numCubos = 0
 	coresLavanderias = [[Preto for i in range(2)] for j in range(2)] # Todas lavanderias iniciam pretas
  ##
-
+	# Caso inicial de rodada
 	if disponibilidade[0] == '1' and disponibilidade[1] == '1' and disponibilidade[2] == '1' and disponibilidade[3] == '1':
 		lateral = 4
 		coresLavanderias = iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias)
+	# Caso de reinicialização
 	else:
-		lateral = lateralDisponiVEL(lavanderias)
-		numCubos, coresLavanderias = reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, colorE, colorD)
+		lateral = lateralDisponivel(lavanderias)
+		numCubos, coresLavanderias = reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, colorE, colorD, move_steering)
 	
-	return move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos
+	return move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos, move_steering
