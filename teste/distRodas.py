@@ -1,43 +1,18 @@
 from ev3dev2.motor import *
 from ev3dev2.sensor.lego import *
 
-move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
-motorEsq = LargeMotor(OUTPUT_C)
-motorDir = LargeMotor(OUTPUT_D)
-Velocidade = 20
 
-def main():
-	motorEsq.reset()
-	motorDir.reset()
+def drift(super):
+#Se super for True, o robô vai dar drift de ré.
+#Se não, ele faz a volta na lavanderia
+	move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
+	move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
+	if(super):
+		move_steering.on_for_rotations(-20, SpeedPercent(-50), 4.2)
+	else:
+		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
+		move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.05)
+		move_tank.on_for_rotations(SpeedPercent(50), SpeedPercent(50), 2.252)
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
 
-	a = motorEsq.position
-	b = motorDir.position
-	move_tank.on_for_rotations(SpeedPercent(Velocidade), SpeedPercent(Velocidade), 1)
-	a = motorEsq.position
-	b = motorDir.position
-	print('Esquerda 1:', a, 'Direita 1:', b, )
-	move_tank.on_for_rotations(SpeedPercent(Velocidade), SpeedPercent(Velocidade), 2)
-	a = motorEsq.position
-	b = motorDir.position	
-	print('Esquerda 2:', a, 'Direita 2:', b, )
-	a = motorEsq.position
-	b = motorDir.position
-	move_tank.on_for_rotations(SpeedPercent(Velocidade), SpeedPercent(Velocidade), 3)
-	a = motorEsq.position
-	b = motorDir.position
-	print('Esquerda 3:', a, 'Direita 3:', b, )
-	motorEsq.reset()
-	motorDir.reset()
-	move_tank.on_for_rotations(SpeedPercent(Velocidade), SpeedPercent(Velocidade), 3)
-	a = motorEsq.position
-	b = motorDir.position
-	print('Esquerda 4:', a, 'Direita 4:', b, )
-	motorEsq.reset()
-	motorDir.reset()
-	move_tank.on_for_rotations(SpeedPercent(Velocidade), SpeedPercent(Velocidade), 6)
-	a = motorEsq.position
-	b = motorDir.position
-	print('Esquerda 5:', a, 'Direita 5:', b, )	
-	#::TESTES
-
-main()
+drift(True)

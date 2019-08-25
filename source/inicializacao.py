@@ -170,7 +170,7 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 			contador += 1
 		distancia = int(distancia/5)
 
-		print("ultrassom: ", distancia)
+		
 
 		# Direcionando-se à primeira lavanderia
 
@@ -185,8 +185,8 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 				colorListE.append(colorE.value())
 				colorListD.append(colorD.value())
 				contador += 1
-			print("moda esquerda: ", mode(colorListE))
-			print("moda direita: ", mode(colorListD))
+			
+			
 
 			if mode(colorListE) == COLOR_WHITE:
 				corEsq = COLOR_WHITE
@@ -199,19 +199,19 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 			############################ Finalizando filtro ############################
 
 			# Definindo a matriz de cores tendo em vista que ela foi iniciada totalmente preta
-			print("dir: ", colorD.value())
-			print("esq: ", colorE.value())
-			print("ultrassom: ", ultrassom.value())
+			
+			
+			
 
 			# Preto
 			if(corEsq == corDir and corEsq != COLOR_WHITE):
-				print('op1')
+				
 				coresLavanderias[0][1] = Branco
 				coresLavanderias[1][0] = Branco
 				break
 			# Branco
 			elif(corEsq == corDir and corEsq != COLOR_BLACK):
-				print('op2')
+				
 				coresLavanderias[0][0] = Branco
 				coresLavanderias[1][1] = Branco
 				break

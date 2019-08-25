@@ -10,14 +10,11 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
 
-				print('Re', motorDir.position)
-
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][0] == 1):
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Re', motorDir.position)
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -25,7 +22,6 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -33,7 +29,6 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
 
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha
@@ -42,21 +37,20 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
 
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][0] == 1):
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Re', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][1] == 1):
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Re', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -64,7 +58,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -72,7 +66,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -80,21 +74,21 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][1] == 1):
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Re', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[0][1] == 1):
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Re', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -102,7 +96,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 		if(lavanderias[0][0] == 1):
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Re', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -110,7 +104,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40),1.05) #Virar Esquerda
 			x = linha
@@ -118,14 +112,14 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			distRodas = 5894
 			move_tank.on(SpeedPercent(40), SpeedPercent(40)) # Avançando
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Front', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[0][1] == 1):
 			move_tank.on(SpeedPercent(-40), SpeedPercent(-40)) # Dando ré
 			while(distRodas - abs(motorDir.position) > 0):
-				print('Re', motorDir.position)
+				
 
 			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40),1.05) #Virar Direita
 			x = 7 - linha

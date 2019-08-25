@@ -24,12 +24,12 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	Atualiza = False
 	while cont < 5:
 		corBloco += sensorFrontal.value()
-		print(corBloco)
+		
 		cont +=1
-	print('Cor: ', corBloco)
+	
 	# Pega a média de 5 leituras do sensor de cor frontal, se for menor que 15 é preto
 	corBloco = Preto if (int(corBloco/5) < 15) else Branco
-	print('Cor final: ', corBloco)
+	
 	##########################################
 
 	# Se estiver na lateral 1 a lavanderia [0][0] estiver livre para aquela cor, pode pegar o bloco
@@ -109,25 +109,27 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 	garra_drive.on(SpeedPercent(-10), SpeedPercent(10)) # Abre garras continuamente
 	time.sleep(0.1)
 	garra_drive.wait_until_not_moving()
-	garra_drive.off()
+	garra_drive.off() # Se travar o motor, desliga
 
 	distDir = motorDir.position
 	flag = True
 
 	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
-	while((motorDir.position - distDir) < 360):
-		print("Heh:", distDir)
-		print("He:", motorDir.position)
+	# Andar até chegar no bloco
+	while((motorDir.position - distDir) < 360):	
+		# Se passar em alguma linha, entrou no quadrado, podemos diminuir a distância que falta para andar
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
 			flag = False
 			distDir -= 100
 	distDir = motorDir.position
-	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))	
-	while((motorDir.position - distDir) < 15):
+	# Dar uma pequena ré para confirmar a cor que o sensor está lendo
+	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))
+	while((abs(motorDir.position - distDir)) < 10):
 		pass
 	tank_drive.on(SpeedPercent(0), SpeedPercent(0))
 	verifica, Atualiza = verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)
 	if(verifica):
+		# Se tiver que pegar o bloco
 		garra_drive.on(SpeedPercent(10), SpeedPercent(-10)) # Fecha garras continuamente
 		time.sleep(0.1)
 		garra_drive.wait_until_not_moving()
@@ -152,6 +154,7 @@ def largaBloco(garra_drive, tank_drive):
 	garra1.reset()
 	garra2.reset()
 
+# Main de teste
 if __name__ == '__main__':
 
 	lateral = 1 # Pode ser de 1 a 4, sendo que significa em qual lateral estamos com base na posição

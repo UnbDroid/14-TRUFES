@@ -28,7 +28,7 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 	else:
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 		distTot = N*(linha-2) + 220
-	print('linha:', linha, 'dist:', distTot)
+	
 
 	while((distTot - distMot) > 0):
 		distMot = abs(int((motorEsq.position + motorDir.position)/2))
@@ -59,7 +59,7 @@ def escreveArquivo():
 	arq.close()
 
 def ultimoCubo(linha, move_garra, motorDir):
-	print("ULTIMO")
+	
 	move_garra.on(SpeedPercent(-10), SpeedPercent(10)) # Abre garras continuamente
 	move_garra.wait_until_not_moving()
 	move_garra.off()
@@ -71,7 +71,7 @@ def ultimoCubo(linha, move_garra, motorDir):
 	move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 	while((motorDir.position - distDir) < 431):
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
-			print("Heh")
+			
 			flag = False
 			distDir -= 100
 	move_tank.on(STOP, STOP)
@@ -95,13 +95,13 @@ def controla(numCubos, lateral):
 			else:
 				descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD)
 				linha += 1
-				print(linha)
+				
 				motorEsq.reset()
 				motorDir.reset()
 				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
 			if(linha == 7 and comCubo == False): #Se chegar no final sem pegar o cubo 'atualiza', tem que virar e continuar de qualquer jeito
-				print("Lava: ",lavanderias)
-				print("Lata: ",lateral)
+				
+				
 				if(lateral == 4 and lavanderias [0][1] == 0):
 					drift(False, move_tank, move_steering)
 				elif(lateral == 3 and lavanderias [1][1] == 0):
@@ -111,7 +111,7 @@ def controla(numCubos, lateral):
 				elif(lateral == 1 and lavanderias [0][0] == 0):
 					drift(False, move_tank, move_steering)
 				else:
-					print("NASNBNOASID")
+					
 					move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
 					drift(True, move_tank, move_steering)
 				atualiza = True
@@ -123,11 +123,11 @@ def controla(numCubos, lateral):
 			ultraDist = filterultrassom(ultrassom)
 			while (ultraDist > 120):
 				ultraDist = filterultrassom(ultrassom)
-				print("DIST:", ultraDist)
+				
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and filterultrassom(ultrassom) > 310):
 					alinhaTempo(colorE, colorD, 40, move_tank, False)
 			move_tank.on(STOP, STOP)
-			print("HERE1")
+			
 			if(numCubos < 3):
 				comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF, colorE, colorD)  # Função de aproximar e pegar o bloco
 			else:
@@ -139,7 +139,7 @@ def controla(numCubos, lateral):
 			motorDir.reset()
 			move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL)) # Dando ré
 			distRe = 0
-			print('Tot:', distRodas)
+			
 			while(distRodas - (distRe) > 60):
 				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distRodas - (distRe) > 500):
