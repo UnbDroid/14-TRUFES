@@ -30,16 +30,20 @@ QUADRADO = 2.252
 def leArquivo():
 	coresLavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam brancas
 	arq = open('cores.txt', 'r')
+	# Lê uma linha com 4 inteiros e coloca na matriz de cores
+	# 1 é branco e 0 é preto
 	texto = arq.read().split()
 	coresLavanderias[0][0] = int(texto[0])
 	coresLavanderias[0][1] = int(texto[1])
 	coresLavanderias[1][0] = int(texto[2])
 	coresLavanderias[1][1] = int(texto[3])
 	arq.close()
+	# Retorna uma matriz com a relação das cores das matrizes na arena
 	return coresLavanderias
 
 def escreveArquivo(coresLavanderias):
 	arq = open('cores.txt', 'w')
+	# Registra a matriz de cores da lavanderia para caso de reinicialização do robô
 	arq.write(str(coresLavanderias[0][0])+" "+str(coresLavanderias[0][1])+" "+str(coresLavanderias[1][0])+" "+str(coresLavanderias[1][1]))
 	arq.close()
 

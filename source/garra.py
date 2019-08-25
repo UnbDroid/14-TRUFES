@@ -27,10 +27,12 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 		print(corBloco)
 		cont +=1
 	print('Cor: ', corBloco)
+	# Pega a média de 5 leituras do sensor de cor frontal, se for menor que 15 é preto
 	corBloco = Preto if (int(corBloco/5) < 15) else Branco
 	print('Cor final: ', corBloco)
 	##########################################
 
+	# Se estiver na lateral 1 a lavanderia [0][0] estiver livre para aquela cor, pode pegar o bloco
 	if lateral == 1:
 		if coresLavanderias[0][0] == corBloco:
 			if lavanderias[0][0] == Livre:
@@ -39,6 +41,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 				return True, Atualiza
 			else:
 				return False, Atualiza
+		# Se estiver na lateral 1 a lavanderia [1][0] estiver livre para aquela cor, pode pegar o bloco
 		else:
 			if lavanderias[1][0] == Livre:
 				lavanderias[1][0] = Ocupada
@@ -46,6 +49,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 			else:
 				return False, Atualiza
 		
+	# Se estiver na lateral 2 a lavanderia [1][0] estiver livre para aquela cor, pode pegar o bloco	
 	elif lateral == 2:
 		if coresLavanderias[1][0] == corBloco:
 			if lavanderias[1][0] == Livre:
@@ -54,12 +58,15 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 				return True, Atualiza
 			else:
 				return False, Atualiza
+		# Se estiver na lateral 1 a lavanderia [1][1] estiver livre para aquela cor, pode pegar o bloco
 		else:
 			if lavanderias[1][1] == Livre:
 				lavanderias[1][1] = Ocupada
 				return True, Atualiza
 			else:
 				return False, Atualiza
+
+	# Se estiver na lateral 3 a lavanderia [1][1] estiver livre para aquela cor, pode pegar o bloco
 	elif lateral == 3:
 		if coresLavanderias[1][1] == corBloco:
 			if lavanderias[1][1] == Livre:
@@ -68,12 +75,15 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 				return True, Atualiza
 			else:
 				return False, Atualiza
+		# Se estiver na lateral 3 a lavanderia [0][1] estiver livre para aquela cor, pode pegar o bloco
 		else:
 			if lavanderias[0][1] == Livre:
 				lavanderias[0][1] = Ocupada
 				return True, Atualiza
 			else:
 				return False, Atualiza
+	
+	# Se estiver na lateral 4 a lavanderia [0][1] estiver livre para aquela cor, pode pegar o bloco
 	elif lateral == 4: 
 		if coresLavanderias[0][1] == corBloco:
 			if lavanderias[0][1] == Livre:
@@ -82,6 +92,8 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 				return True, Atualiza
 			else:
 				return False, Atualiza
+
+		# Se estiver na lateral 4 a lavanderia [0][0] estiver livre para aquela cor, pode pegar o bloco
 		else:
 			if lavanderias[0][0] == Livre:
 				lavanderias[0][0] = Ocupada
@@ -165,12 +177,16 @@ if __name__ == '__main__':
 	move_garra = MoveTank(OUTPUT_A, OUTPUT_B, motor_class=MediumMotor)
 	# Sem aplicar modo no leitor frontal
 	sensorFrontal = ColorSensor(INPUT_2)
+
+	# Sensores laterais
+	colorE = ColorSensor(INPUT_3)
+	colorD = ColorSensor(INPUT_4)
 	
 	tank_drive.on(SpeedRPM(40), SpeedRPM(40)) # Inicia movimento
 	while(ultrassom.value() > 130):
 		g=1
 	tank_drive.on(SpeedRPM(0), SpeedRPM(0)) # Para movimento
-	pegaBloco(move_garra, tank_drive, lateral, coresLavanderias, lavanderias, sensorFrontal) # Função de aproximar e pegar o bloco
+	pegaBloco(move_garra, tank_drive, lateral, coresLavanderias, lavanderias, sensorFrontal, colorE, colorD) # Função de aproximar e pegar o bloco
 	tank_drive.on_for_rotations(SpeedPercent(-50),SpeedPercent(-50), 2) # 360 para teste
 	largaBloco(move_garra, tank_drive) # Função que afasta e larga o bloco
 
