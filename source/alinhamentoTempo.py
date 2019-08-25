@@ -23,9 +23,11 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 
 	iniTime = time.clock()
 
-	velocidade = -velocidade if (re) else velocidade #Alinhamento ré vs frente
+	# Define se irá de ré ou para frente com base no booleano 're', alterando a velocidade pra positivo ou negativo
+	velocidade = -velocidade if (re) else velocidade 
 	print(velocidade)
 
+	# Verifica o momento que os sensores passaram nas linhas pretas, essa verificação é feita por 0.7 segundos
 	while((time.clock() - iniTime) < 0.7):
 		leftColor = sensorE.value()
 		rightColor = sensorD.value()
@@ -48,6 +50,9 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 		tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), 0.1) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 	else:
+
+		# Tira a diferença entre os motores compensando um dos motores pela metade da velocidade
+		# Isso é feito pelo dobro do tempo da diferença em que os dois passaram pelas linhas
 		if(leftTime > rightTime):
 			# Menor time = sair primeiro
 			print('left', leftTime-rightTime)
@@ -62,6 +67,7 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 	print("OUT")
 
+# Main para testar, fica alinhando até encontrar algum objeto a pelo menos 20cm de distância
 if __name__ == '__main__':
 	actime = time.clock()
 	velocidade = 40
@@ -85,5 +91,4 @@ if __name__ == '__main__':
 		distancia = ultrassom.value()/10
 		print("distancia: ", distancia)
 	tank_drive.on(SpeedPercent(0),SpeedPercent(0))
-	tank_drive.on_for_rotations(SpeedPercent(-100),SpeedPercent(0), 2.1)
 	

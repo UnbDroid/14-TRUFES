@@ -25,7 +25,7 @@ def descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD):
 	motorEsq.reset()
 	motorDir.reset()
 	distMotores = 0
-
+	
 	move_tank.on(SpeedPercent(40), SpeedPercent(40))
 	while(N - distMotores > 0):
 		distMotores = int((motorEsq.position + motorDir.position)/2)
