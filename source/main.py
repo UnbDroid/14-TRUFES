@@ -187,7 +187,6 @@ def controla(numCubos, lateral):
 					# Alinha, enquanto longe da parede
 					alinhaTempo(colorE, colorD, 40, move_tank, False)
 			comCubo = False
-			linha -= 1
 	return
 
 if __name__ == '__main__':

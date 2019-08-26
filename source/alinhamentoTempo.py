@@ -24,8 +24,7 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 	iniTime = time.clock()
 
 	# Define se irá de ré ou para frente com base no booleano 're', alterando a velocidade pra positivo ou negativo
-	velocidade = -velocidade if (re) else velocidade 
-	print(velocidade)
+	velocidade = -velocidade if (re) else velocidade
 
 	# Verifica o momento que os sensores passaram nas linhas pretas, essa verificação é feita por 0.7 segundos
 	while((time.clock() - iniTime) < 0.7):
@@ -33,10 +32,8 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 		rightColor = sensorD.value()
 		if(leftColor == COLOR_BLACK):
 			leftTime = time.clock()
-			#print(leftTime, "LEFT")
 		if(rightColor == COLOR_BLACK):
 			rightTime = time.clock()
-			#print(rightTime, "RIGHT")
 
 	if(((leftTime + rightTime) - iniTime*2) > 0.55 or abs(leftTime-rightTime) > 3):
 		print("WELP")
@@ -55,17 +52,14 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 		# Isso é feito pelo dobro do tempo da diferença em que os dois passaram pelas linhas
 		if(leftTime > rightTime):
 			# Menor time = sair primeiro
-			print('left', leftTime-rightTime)
 			fixedTime = 2*(leftTime-rightTime+0.03)
 			tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2),fixedTime) 
 			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 		if(leftTime < rightTime):
 			# Menor time = sair primeiro
-			print('right', rightTime-leftTime)
 			fixedTime = 2*(rightTime-leftTime+0.03)
 			tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), fixedTime)        
 			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
-	print("OUT")
 
 # Main para testar, fica alinhando até encontrar algum objeto a pelo menos 20cm de distância
 if __name__ == '__main__':

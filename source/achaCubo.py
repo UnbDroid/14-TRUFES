@@ -41,14 +41,14 @@ def descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD):
 def verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha):
 	distancia = 0
 	ultravalue = 0
-	flag = 0
+	flag = 1
 	distMotor = motorDir.position
 	distancia = filterultrassom(ultrassom)
 	
+	print(distancia)
 	if (distancia < dist_max):  # Pode ser que o cubo esteja no último quadrado
 		move_tank.on(SpeedPercent(50), SpeedPercent(50))
 		while(distancia > 300 and flag != 2):  # Verifica se achou cubo de outra linha
-
 			if(flag):
 				ultravalue = filterultrassom(ultrassom)
 				flag = 0 # Estado 1
@@ -58,9 +58,10 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha):
 				# Alinhamento
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 				ultravalue = filterultrassom(ultrassom)
-
 			distancia = filterultrassom(ultrassom)
 			if(abs(distancia-ultravalue) > 200):
+				print("Dist", distancia)
+				print("Ultra:", ultravalue)
 				flag = 2 # Não existe cubo na linha
 
 		distancia = filterultrassom(ultrassom)
@@ -77,5 +78,5 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha):
 
 	# Se chegou no fim, não precisa virar para procurar
 	if(linha != 7):
-		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.0)
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
 	return False
