@@ -4,6 +4,7 @@ from ev3dev2.sensor.lego import *
 from statistics import mode
 from support import *
 from alinhamentoTempo import alinhaTempo
+from time import sleep
 
 #Definindo o nome das cores da matriz de cores
 Preto = 0
@@ -18,7 +19,7 @@ Livre = True
 Ocupada = False
 
 #Fatores
-N = 804
+N = 780
 VEL = 40
 VELROT = 30
 STOP = SpeedPercent(0)
@@ -170,6 +171,10 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 		# Direcionando-se à primeira lavanderia ([0][0])
 
 		if(distancia <= 125):
+			
+			sleep(0.1)
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.1)
+			
 			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90) # 90º esquerda
 
 			# Filtro para cor de leitura #
@@ -210,6 +215,7 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
 			# Alinhamento
 			alinhaTempo(colorE, colorD, 40, move_tank, False)
+	
 
 	escreveArquivo(coresLavanderias)
 	return coresLavanderias

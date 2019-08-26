@@ -19,7 +19,7 @@ Ocupada = False
 
 tempo_centro_quadrado = 1  # Esse é o tempo que ele precisa para chegar ao centro do quadrado
 dist_max = 2100  # Essa é a distância do primeiro ao último quadrado visivel da linha
-N = 804
+N = 780
 
 def descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD):
 
@@ -72,7 +72,7 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha):
 		else:
 			# Se deu ruim, dá ré
 			move_tank.on(SpeedPercent(-50), SpeedPercent(-50))
-			while(motorDir.position - distMotor > 0):
+			while(motorDir.position - distMotor > 60):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					alinhaTempo(colorE, colorD, 40, move_tank, True)
 

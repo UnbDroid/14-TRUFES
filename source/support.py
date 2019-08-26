@@ -2,9 +2,9 @@ from ev3dev2.motor import *
 
 def filterultrassom(ultrassom):
 	valor = 0
-	for i in range(0, 5):
+	for i in range(0, 10):
 		valor += ultrassom.value()
-	return int(valor/5)
+	return int(valor/10)
 
 def drift(super, move_tank, move_steering):
 	#Se super for True, o robô vai dar drift de ré.
@@ -15,7 +15,7 @@ def drift(super, move_tank, move_steering):
 		# < 50 == Esquerda como pivô
 		# > 50 == Direita como pivô
 		# == 50 Continua reto
-		move_steering.on_for_rotations(22, SpeedPercent(-50), 4.45)
+		move_steering.on_for_rotations(20, SpeedPercent(-50), 4.35)
 		move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 0.7)
 	else:
 		# Contorna Cubo

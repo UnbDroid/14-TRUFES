@@ -8,7 +8,7 @@ from garra import *
 from ultimoBloco import ultimoBloco
 from support import *
 
-N = 804
+N = 780
 VEL = 40
 VELROT = 30
 STOP = SpeedPercent(0)
@@ -28,7 +28,7 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 	else:
 		# Vai até a lavanderia de início da lateral
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
-		distTot = N*(linha-2) + 220 # Distancia a ser andada, pela linha atual até o começo
+		distTot = N*(linha-2) + 240 # Distancia a ser andada, pela linha atual até o começo
 	
 
 	while((distTot - distMot) > 0):
@@ -146,12 +146,16 @@ def controla(numCubos, lateral):
 			move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL)) # Dando ré
 			distRe = 0
 			
-			while(distRodas - distRe > 60):
+			while(distRodas - distRe > 260):
 				# Da ré até chegar na parede de novo
 				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
-				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distRodas - (distRe) > 500):
+				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 					# Alinha
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					if (distRodas - (distRe) > 500):
+						alinhaTempo(colorE, colorD, 40, move_tank, True)
+					else:
+						break
+			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 0.35) # Dando ré
 
 			if(comCubo):
 				# Se estiver com cubo, tem que levar até uma lavanderia

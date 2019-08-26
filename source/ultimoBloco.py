@@ -3,7 +3,7 @@ from ev3dev2.sensor.lego import *
 from garra import *
 
 #Define Vars
-N = 804
+N = 780
 VEL = 40
 STOP = SpeedPercent(0)
 ROT90 = 1.03

@@ -15,20 +15,22 @@ COLOR_WHITE = 6
 Livre = 1
 Ocupada = 0
 
-N = 804
+N = 780
 
 def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 	# Filtro de verificação da cor do cubo
 	cont = 0
 	corBloco = 0
 	Atualiza = False
-	while cont < 5:
+	while cont < 10:
 		corBloco += sensorFrontal.value()
+		print(sensorFrontal.value())
 		
 		cont +=1
 	
 	# Pega a média de 5 leituras do sensor de cor frontal, se for menor que 15 é preto
-	corBloco = Preto if (int(corBloco/5) < 15) else Branco
+	print("cor: ",int(corBloco/10))
+	corBloco = Preto if (int(corBloco/10) < 15) else Branco
 	
 	##########################################
 
@@ -124,7 +126,7 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 	distDir = motorDir.position
 	# Dar uma pequena ré para confirmar a cor que o sensor está lendo
 	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))
-	while((abs(motorDir.position - distDir)) < 10):
+	while((abs(motorDir.position - distDir)) < 25):
 		pass
 	tank_drive.on(SpeedPercent(0), SpeedPercent(0))
 	verifica, Atualiza = verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)
