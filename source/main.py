@@ -41,27 +41,28 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 		drift(True, move_tank, move_steering) # Super drift
 	return
 
-def leArquivo():
-	lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
+#def leArquivo():
+	#lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas lavanderias iniciam disponíveis
 	# Lê uma linha com 4 inteiros e coloca na matriz de disponibilidade
 	# 1 é livre e 0 é ocupado
-	arq = open('matriz.txt', 'r')
-	texto = arq.read().split()
-	lavanderias[0][0] = int(texto[0])
-	lavanderias[0][1] = int(texto[1])
-	lavanderias[1][0] = int(texto[2])
-	lavanderias[1][1] = int(texto[3])
-	arq.close()
-	print(lavanderias)
+	# arq = open('matriz.txt', 'r')
+	# texto = arq.read().split()
+	# lavanderias[0][0] = int(texto[0])
+	# lavanderias[0][1] = int(texto[1])
+	# lavanderias[1][0] = int(texto[2])
+	# lavanderias[1][1] = int(texto[3])
+	# arq.close()
+	#print(lavanderias)
 	# Retorna uma matriz com a relação da disponibilidade das lavanderias na arena
-	return lavanderias, texto
+	#return lavanderias, texto
 
 
-def escreveArquivo():
-	arq = open('matriz.txt', 'w')
-	arq.write(str(lavanderias[0][0])+" "+str(lavanderias[0][1])+" "+str(lavanderias[1][0])+" "+str(lavanderias[1][1]))
-	# Registra a matriz de disponibilidade no arquivo para atualização
-	arq.close()
+ #def escreveArquivo(lavanderias):
+ 	#arq = open('matriz.txt', 'w')
+ 	#arq.write(str(lavanderias[0][0])+" "+str(lavanderias[0][1])+" "+str(lavanderias[1][0])+" "+str(lavanderias[1][1]))
+ 	# Atualiza a matriz disponibilidade
+
+ 	#arq.close()
 
 def ultimoCubo(linha, move_garra, motorDir):
 	
@@ -167,7 +168,7 @@ def controla(numCubos, lateral):
 				vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
 				numCubos += 1
 				largaBloco(move_garra, move_tank)
-				escreveArquivo() # Atualiza a matriz de disponibilidade
+				#escreveArquivo() # Atualiza a matriz de disponibilidade
 			else:
 				# Sem cubo, só virar pra continuar normal
 				move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
@@ -204,7 +205,7 @@ if __name__ == '__main__':
 	motorDir = LargeMotor(OUTPUT_D)
 	btn = Button()
 	sound = Sound()
-	lavanderias, disponibilidade = leArquivo() # Pegando informações da matriz disponibilidade
+	lavanderias = lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas as matrizes começam livres
 	lateral = 0
 
 	while not btn.any(): # Espera o botão
@@ -212,8 +213,7 @@ if __name__ == '__main__':
 
 	sound.beep() #Beeep
 	
-	move_steering = MoveSteering(OUTPUT_C, OUTPUT_D)
-	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos, move_steering = setRobot(lavanderias, disponibilidade)
+	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos, move_steering = setRobot(lavanderias)
 	controla(numCubos, lateral)
 
 	motorDir.reset()
