@@ -16,7 +16,7 @@ def drift(super, move_tank, move_steering):
 		# > 0 == Direita como pivô
 		# == 0 Continua reto
 		move_steering.on_for_rotations(20, SpeedPercent(-50), 4.7)
-		move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40), 0.15)
+		move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40), 0.12)
 		move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 0.7)
 	else:
 		# Contorna Cubo
