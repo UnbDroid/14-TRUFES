@@ -12,10 +12,11 @@ def drift(super, move_tank, move_steering):
 	if(super):
 		# Porcentagem de graus baseado na velocidade da roda pivô
 		# Ex: Quando vale 25, a roda direita girará a metade da velocidade da roda esquera, e contrario é valido para 75.
-		# < 50 == Esquerda como pivô
-		# > 50 == Direita como pivô
-		# == 50 Continua reto
-		move_steering.on_for_rotations(20, SpeedPercent(-50), 4.35)
+		# < 0 == Esquerda como pivô
+		# > 0 == Direita como pivô
+		# == 0 Continua reto
+		move_steering.on_for_rotations(20, SpeedPercent(-50), 4.7)
+		move_tank.on_for_rotations(SpeedPercent(-40), SpeedPercent(40), 0.15)
 		move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 0.7)
 	else:
 		# Contorna Cubo

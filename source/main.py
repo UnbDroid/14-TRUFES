@@ -86,7 +86,7 @@ def ultimoCubo(linha, move_garra, motorDir):
 	move_garra.wait_until_not_moving()
 	move_garra.off()
 	# Chama a função para deixar o último bloco
-	ultimoBloco(linha, lavanderias, lateral, move_tank, int((motorEsq.position + motorDir.position)/2), move_garra, motorDir)
+	ultimoBloco(linha, lavanderias, lateral, move_tank, int((motorEsq.position + motorDir.position)/2), move_garra, motorDir, colorE, colorD)
 
 def controla(numCubos, lateral):
 	comCubo = False # Inicia sem cubo
@@ -97,7 +97,7 @@ def controla(numCubos, lateral):
 	while(numCubos < 4):
 		while(comCubo == False):
 			if(lateral == 4 and lavanderias[0][0] == 0 and flag):
-				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha)
+				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linha)
 				flag = 0
 				linha = 2
 			else:
@@ -106,7 +106,7 @@ def controla(numCubos, lateral):
 				flag = 0
 				motorEsq.reset()
 				motorDir.reset()
-				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha) # Verifica se existe cubo na linha
+				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linha) # Verifica se existe cubo na linha
 			if(linha == 7 and comCubo == False): # Se chegar no final sem pegar o cubo 'atualiza', tem que virar e continuar de qualquer jeito
 				# Verifica se é necessário desviar de um cubo na lavanderia
 				if(lateral == 4 and lavanderias [0][1] == 0):
@@ -139,27 +139,30 @@ def controla(numCubos, lateral):
 			else:
 				# Vai pra configuração final
 				ultimoCubo(linha, move_garra, motorDir)
+				numCubos += 1
+				break
 			distRodas = int((motorEsq.position + motorDir.position)/2)
-
+			print(distRodas)
 			motorEsq.reset()
 			motorDir.reset()
 			move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL)) # Dando ré
 			distRe = 0
 			
-			while(distRodas - distRe > 260):
+			while(abs(distRodas - distRe) > 280):
 				# Da ré até chegar na parede de novo
 				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 					# Alinha
-					if (distRodas - (distRe) > 500):
+					if (abs(distRodas - (distRe)) > 500):
 						alinhaTempo(colorE, colorD, 40, move_tank, True)
 					else:
 						break
-			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 0.35) # Dando ré
+			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 0.7) # Dando ré
+
 
 			if(comCubo):
 				# Se estiver com cubo, tem que levar até uma lavanderia
-				move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT),ROT90)
+				move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
 				# A lavanderia destino é definida pela variável 'atualiza'
 				vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
 				numCubos += 1
@@ -175,7 +178,10 @@ def controla(numCubos, lateral):
 			lateral = lateral - 1 if (lateral != 1) else 4 # Rotação anti-horária de laterais
 			linha = 2 # Sempre vai começar na linha 2
 			move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # Vira pra arena
-			comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha) # Aproveita pra procurar um cubo na linha
+			motorEsq.reset()
+			motorDir.reset()
+			sleep(0.3)
+			comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linha) # Aproveita pra procurar um cubo na linha
 			atualiza = False
 		elif(comCubo):
 			# Deixou um cubo, mas continua na mesma lateral
@@ -210,6 +216,8 @@ if __name__ == '__main__':
 	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos, move_steering = setRobot(lavanderias, disponibilidade)
 	controla(numCubos, lateral)
 
+	motorDir.reset()
+	motorEsq.reset()
 # Após iniciar teremos uma matriz de cores das lavanderias (coresLavanderias que é uma matriz 2x2) na qual inicialmente
 # estão pretas. A disponibilidadeLavanderias (matriz 2x2) é iniciada com todas lavanderias disponíveis (True/1)
 

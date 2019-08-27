@@ -160,6 +160,7 @@ def reiniciar(disponibilidade, lateral, move_tank, lavanderias, ultrassom, color
 
 def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 	move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
+	flag = 0
 	
 	while True:
 		# Filtrando o valor do ultrassom
@@ -170,12 +171,10 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 
 		# Direcionando-se à primeira lavanderia ([0][0])
 
-		if(distancia <= 125):
+		if(flag):
+			#move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.1)
 			
-			sleep(0.1)
-			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.1)
-			
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90) # 90º esquerda
+			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90 + 0.05) # 90º esquerda
 
 			# Filtro para cor de leitura #
 			colorListE = list()
@@ -212,9 +211,14 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 				coresLavanderias[1][1] = Branco
 				break
 
-		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and distancia > 310):
+		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 			# Alinhamento
-			alinhaTempo(colorE, colorD, 40, move_tank, False)
+			if(distancia > 310):
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+			else:
+				flag = 1
+				move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 1.4)
+
 	
 
 	escreveArquivo(coresLavanderias)

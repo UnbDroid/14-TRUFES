@@ -38,17 +38,19 @@ def descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD):
 	move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(30), 0.07) # Ajuste do erro de ré
 
 
-def verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha):
+def verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linha):
 	distancia = 0
 	ultravalue = 0
+	correction = 0
 	flag = 1
-	distMotor = motorDir.position
+	distMotor = int((motorDir.position + motorEsq.position)/2)
 	distancia = filterultrassom(ultrassom)
-	
-	print(distancia)
+
+	print(distMotor)
 	if (distancia < dist_max):  # Pode ser que o cubo esteja no último quadrado
 		move_tank.on(SpeedPercent(50), SpeedPercent(50))
 		while(distancia > 300 and flag != 2):  # Verifica se achou cubo de outra linha
+			print("Primeira: ", motorDir.position)
 			if(flag):
 				ultravalue = filterultrassom(ultrassom)
 				flag = 0 # Estado 1
@@ -59,7 +61,8 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha):
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
 				ultravalue = filterultrassom(ultrassom)
 			distancia = filterultrassom(ultrassom)
-			if(abs(distancia-ultravalue) > 200):
+			print(distancia)
+			if(abs(distancia-ultravalue) > 200 or distancia > 1840):
 				print("Dist", distancia)
 				print("Ultra:", ultravalue)
 				flag = 2 # Não existe cubo na linha
@@ -71,12 +74,20 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorDir, linha):
 			return True
 		else:
 			# Se deu ruim, dá ré
+			print("Segunda: ", int((motorDir.position + motorEsq.position)/2))
 			move_tank.on(SpeedPercent(-50), SpeedPercent(-50))
-			while(motorDir.position - distMotor > 60):
+			posiMotor = int((motorDir.position + motorEsq.position)/2)
+			while((abs(posiMotor) - distMotor) > 160):
+				if((int((motorDir.position + motorEsq.position)/2) < 0 and posiMotor > 0) or (int((motorDir.position + motorEsq.position)/2) > 0 and posiMotor < 0)):
+					break
+				posiMotor = int((motorDir.position + motorEsq.position)/2)
+				print("N:", posiMotor)
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					alinhaTempo(colorE, colorD, 40, move_tank, True)
+			correction = 0.15
+
 
 	# Se chegou no fim, não precisa virar para procurar
 	if(linha != 7):
-		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05)
+		move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(-30), 1.05 + correction)
 	return False
