@@ -60,27 +60,29 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linh
 	flag = 1
 	distMotor = int((motorDir.position + motorEsq.position)/2)
 	distancia = filterultrassom(ultrassom)
+	listaDist = []
+	media = 0
 
 	print(distMotor)
 	if (distancia < dist_max):  # Pode ser que o cubo esteja no último quadrado
 		move_tank.on(SpeedPercent(50), SpeedPercent(50))
+		for i in range(0,6):
+			listaDist.append(filterultrassom(ultrassom))
+		media = int(sum(listaDist) / len(listaDist))		
 		while(distancia > 300 and flag != 2):  # Verifica se achou cubo de outra linha
 			print("Primeira: ", motorDir.position)
-			if(flag):
-				ultravalue = filterultrassom(ultrassom)
-				flag = 0 # Estado 1
+			ultravalue = filterultrassom(ultrassom)
+			if(ultravalue in range((media-250), (media+250))):
+				listaDist.pop(0)
+				listaDist.append(ultravalue)
+				media = int(sum(listaDist) / len(listaDist))
 			else:
-				flag = 1 # Estado 2
+				flag = 2	
+				
 			if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK and distancia > 320):
 				# Alinhamento
 				alinhaTempo(colorE, colorD, 40, move_tank, False)
-				ultravalue = filterultrassom(ultrassom)
 			distancia = filterultrassom(ultrassom)
-			print(distancia)
-			if(abs(distancia-ultravalue) > 200 or distancia > 1840):
-				print("Dist", distancia)
-				print("Ultra:", ultravalue)
-				flag = 2 # Não existe cubo na linha
 
 		distancia = filterultrassom(ultrassom)
 
@@ -88,11 +90,12 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linh
 		if(filterultrassom(ultrassom) < 2100 and flag != 2):
 			return True
 		else:
+			posiMotor = int((motorDir.position + motorEsq.position)/2)
+			go = 200 if (posiMotor > 400) else 80
 			# Se deu ruim, dá ré
 			print("Segunda: ", int((motorDir.position + motorEsq.position)/2))
 			move_tank.on(SpeedPercent(-50), SpeedPercent(-50))
-			posiMotor = int((motorDir.position + motorEsq.position)/2)
-			while((abs(posiMotor) - distMotor) > 160):
+			while(abs(posiMotor - distMotor) > go):
 				if((int((motorDir.position + motorEsq.position)/2) < 0 and posiMotor > 0) or (int((motorDir.position + motorEsq.position)/2) > 0 and posiMotor < 0)):
 					break
 				posiMotor = int((motorDir.position + motorEsq.position)/2)

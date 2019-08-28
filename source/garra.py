@@ -130,8 +130,10 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 		pass
 	tank_drive.on(SpeedPercent(0), SpeedPercent(0))
 	verifica, Atualiza = verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)
+
 	if(verifica):
 		# Se tiver que pegar o bloco
+		tank_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(10), 0.1)
 		garra_drive.on(SpeedPercent(10), SpeedPercent(-10)) # Fecha garras continuamente
 		time.sleep(0.1)
 		garra_drive.wait_until_not_moving()

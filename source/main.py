@@ -24,7 +24,7 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 	if(atualiza):
 		# Vai até a lavanderia da próxima lateral
 		move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL))
-		distTot = (7-linha)*N # Distancia a ser andada, pela linha atual até a última linha
+		distTot = (7-linha)*N + 80 # Distancia a ser andada, pela linha atual até a última linha
 	else:
 		# Vai até a lavanderia de início da lateral
 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
@@ -64,7 +64,7 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 
  	#arq.close()
 
-def ultimoCubo(linha, move_garra, motorDir):
+def ultimoCubo(linha, move_garra, motorDir, lateral, y):
 	
 	move_garra.on(SpeedPercent(-10), SpeedPercent(10)) # Abre garras continuamente
 	move_garra.wait_until_not_moving()
@@ -87,7 +87,7 @@ def ultimoCubo(linha, move_garra, motorDir):
 	move_garra.wait_until_not_moving()
 	move_garra.off()
 	# Chama a função para deixar o último bloco
-	ultimoBloco(linha, lavanderias, lateral, move_tank, int((motorEsq.position + motorDir.position)/2), move_garra, motorDir, colorE, colorD)
+	ultimoBloco(linha, lavanderias, lateral, move_tank, int((motorEsq.position + motorDir.position)/2), move_garra, motorDir, colorE, colorD, y)
 
 def controla(numCubos, lateral):
 	comCubo = False # Inicia sem cubo
@@ -139,7 +139,8 @@ def controla(numCubos, lateral):
 				comCubo, atualiza= pegaBloco(move_garra, move_tank, lateral, coresLavanderias, lavanderias, colorF, colorE, colorD)  # Função de aproximar e pegar o bloco
 			else:
 				# Vai pra configuração final
-				ultimoCubo(linha, move_garra, motorDir)
+				print("lateral: ", lateral)
+				ultimoCubo(linha, move_garra, motorDir, lateral, (2200 - ultraDist))
 				numCubos += 1
 				break
 			distRodas = int((motorEsq.position + motorDir.position)/2)
@@ -149,7 +150,7 @@ def controla(numCubos, lateral):
 			move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL)) # Dando ré
 			distRe = 0
 			
-			while(abs(distRodas - distRe) > 200):
+			while(abs(distRodas - distRe) > 230):
 				# Da ré até chegar na parede de novo
 				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
@@ -168,6 +169,8 @@ def controla(numCubos, lateral):
 				vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
 				numCubos += 1
 				largaBloco(move_garra, move_tank)
+				if(atualiza):
+					move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40), 0.2)
 				#escreveArquivo() # Atualiza a matriz de disponibilidade
 			else:
 				# Sem cubo, só virar pra continuar normal
@@ -208,12 +211,16 @@ if __name__ == '__main__':
 	lavanderias = lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas as matrizes começam livres
 	lateral = 0
 
+	print("GO")
+
 	while not btn.any(): # Espera o botão
 		time.sleep(0.01)
 
 	sound.beep() #Beeep
 	
 	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos, move_steering = setRobot(lavanderias)
+	lateral = 2
+	numCubos = 3
 	controla(numCubos, lateral)
 
 	motorDir.reset()

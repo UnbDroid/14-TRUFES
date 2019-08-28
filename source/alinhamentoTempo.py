@@ -38,7 +38,7 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 	if(((leftTime + rightTime) - iniTime*2) > 0.65 or abs(leftTime-rightTime) > 3):
 		print("WELP")
 		if not(abs(leftTime-rightTime) > 3):
-			tank_drive.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 1)
+			tank_drive.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 1.3)
 			tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 
 		
