@@ -158,6 +158,12 @@ def largaBloco(garra_drive, tank_drive):
 	garra1.reset()
 	garra2.reset()
 
+
+def recuperaBloco(move_tank, ultrassom, move_garra):
+
+	move_tank.on(SpeedPercent(0), SpeedPercent(0))
+
+
 # Main de teste
 if __name__ == '__main__':
 

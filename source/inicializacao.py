@@ -62,7 +62,7 @@ def lateralDisponivel(lavanderias):
 # 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 # 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 # 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-# 				alinhaTempo(colorE, colorD, 40, move_tank, False) # Alinhamento
+# 				alinhaTempo(colorE, colorD, VEL, move_tank, False) # Alinhamento
 # 		move_tank.on(STOP, STOP)
 # 		# para na lavanderia da lavanderia 1 e vira para iniciar
 # 		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180) # 180º direita
@@ -73,7 +73,7 @@ def lateralDisponivel(lavanderias):
 # 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 # 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 # 				# Alinhamento
-# 				alinhaTempo(colorE, colorD, 40, move_tank, False)
+# 				alinhaTempo(colorE, colorD, VEL, move_tank, False)
 # 		move_tank.on(STOP, STOP)
 # 		# Chegou na lavanderia da lateral 2 (90º)
 # 		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # 90º direita
@@ -83,7 +83,7 @@ def lateralDisponivel(lavanderias):
 # 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 # 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 # 				# Alinhamento
-# 				alinhaTempo(colorE, colorD, 40, move_tank, False)
+# 				alinhaTempo(colorE, colorD, VEL, move_tank, False)
 # 		move_tank.on(STOP, STOP)
 # 		# Chegou na [1][1]
 # 		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180) # 180º direita
@@ -103,7 +103,7 @@ def lateralDisponivel(lavanderias):
 # 				move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 # 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 # 				# Alinhamento
-# 				alinhaTempo(colorE, colorD, 40, move_tank, False)
+# 				alinhaTempo(colorE, colorD, VEL, move_tank, False)
 # 				contLinha += 1
 # 		# Chegamos na lateral 3
 # 		move_tank.on(STOP, STOP)
@@ -113,7 +113,7 @@ def lateralDisponivel(lavanderias):
 # 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 # 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 # 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-# 				alinhaTempo(colorE, colorD, 40, move_tank, False)
+# 				alinhaTempo(colorE, colorD, VEL, move_tank, False)
 # 		move_tank.on(STOP, STOP)
 # 		# Chegamos na [0][1]
 # 		move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT180)
@@ -122,7 +122,7 @@ def lateralDisponivel(lavanderias):
 # 		move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
 # 		while (filterultrassom(ultrassom)) >= DISTPAREDE:
 # 			if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
-# 				alinhaTempo(colorE, colorD, 40, move_tank, False)
+# 				alinhaTempo(colorE, colorD, VEL, move_tank, False)
 # 		if lavanderias[0][0] == 0:
 # 			# Desviando do cubo
 # 			move_tank.on(STOP, STOP)
@@ -154,7 +154,7 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 		if(flag):
 			#move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.1)
 			
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90 + 0.06) # 90º esquerda
+			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90 + 0.01) # 90º esquerda
 
 			# Filtro para cor de leitura #
 			colorListE = list()
@@ -194,7 +194,7 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 			# Alinhamento
 			if(distancia > 310):
-				alinhaTempo(colorE, colorD, 40, move_tank, False)
+				alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			else:
 				flag = 1
 				move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 1.4)

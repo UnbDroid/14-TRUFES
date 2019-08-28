@@ -35,7 +35,7 @@ def vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza):
 		distMot = abs(int((motorEsq.position + motorDir.position)/2)) # Média entre as distâncias andadas por cada motor
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and (distTot - distMot) > 400):
 			# Alinha
-			alinhaTempo(colorE, colorD, 40, move_tank, atualiza)
+			alinhaTempo(colorE, colorD, VEL, move_tank, atualiza)
 	move_tank.on(STOP, STOP)
 	if(atualiza):
 		drift(True, move_tank, move_steering) # Super drift
@@ -94,6 +94,7 @@ def controla(numCubos, lateral):
 	linha = 1 # As linha são numeradas de 1 a 8
 	atualiza = False
 	flag = 1 # Controle da situação de reinicialização
+	flagDrift = 0
 
 	while(numCubos < 4):
 		while(comCubo == False):
@@ -101,7 +102,7 @@ def controla(numCubos, lateral):
 				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linha)
 				flag = 0
 				linha = 2
-			else:
+			elif(linha != 7):
 				descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD, linha)
 				linha += 1
 				flag = 0
@@ -110,6 +111,7 @@ def controla(numCubos, lateral):
 				comCubo = verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linha) # Verifica se existe cubo na linha
 			if(linha == 7 and comCubo == False): # Se chegar no final sem pegar o cubo 'atualiza', tem que virar e continuar de qualquer jeito
 				# Verifica se é necessário desviar de um cubo na lavanderia
+				flagDrift = 1
 				if(lateral == 4 and lavanderias [0][1] == 0):
 					drift(False, move_tank, move_steering)
 				elif(lateral == 3 and lavanderias [1][1] == 0):
@@ -121,6 +123,7 @@ def controla(numCubos, lateral):
 				else:
 					move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
 					drift(True, move_tank, move_steering)
+					flagDrift = 0
 				atualiza = True # Mudou de lateral
 				break
 			
@@ -132,7 +135,7 @@ def controla(numCubos, lateral):
 				ultraDist = filterultrassom(ultrassom)
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and filterultrassom(ultrassom) > 310):
 					# Alinha
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on(STOP, STOP)
 			
 			if(numCubos < 3):
@@ -144,44 +147,70 @@ def controla(numCubos, lateral):
 				numCubos += 1
 				break
 			distRodas = int((motorEsq.position + motorDir.position)/2)
-			print(distRodas)
+			print("distRodas: ", distRodas)
 			motorEsq.reset()
 			motorDir.reset()
 			move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL)) # Dando ré
 			distRe = 0
-			
-			while(abs(distRodas - distRe) > 230):
+			distAndar = 230 if (linha != 2) else 650
+
+			recupera = True
+			while(abs(distRodas - distRe) > distAndar):
 				# Da ré até chegar na parede de novo
+				ultraDist = filterultrassom(ultrassom)
+				if((ultraDist > 200 or (ultraDist < 2300 and ultraDist > 1700)) and recupera == True and comCubo == True):
+					#Perdeu o cubo.
+					recuperaBloco(move_tank, ultrassom, move_garra)
+					recupera = False
 				distRe =  abs(int((motorEsq.position + motorDir.position)/2))
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK)):
 					# Alinha
 					if (abs(distRodas - (distRe)) > 500):
-						alinhaTempo(colorE, colorD, 40, move_tank, True)
+						alinhaTempo(colorE, colorD, VEL, move_tank, True)
 					else:
 						break
-			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 0.7) # Dando ré
+			if(linha != 2):
+				move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 0.7) # Dando ré
 
 
 			if(comCubo):
 				# Se estiver com cubo, tem que levar até uma lavanderia
-				move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
-				# A lavanderia destino é definida pela variável 'atualiza'
+				if(linha != 2):
+					move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
+					# A lavanderia destino é definida pela variável 'atualiza'
+					#escreveArquivo() # Atualiza a matriz de disponibilidade
+				else:
+					move_steering.on_for_rotations(26, SpeedPercent(-VEL), 4)
+					linha = 3
+				print("Esta linha:", linha)
 				vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
+				linha = 2 if (linha == 3) else linha 
 				numCubos += 1
 				largaBloco(move_garra, move_tank)
 				if(atualiza):
-					move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(-40), 0.2)
-				#escreveArquivo() # Atualiza a matriz de disponibilidade
+					move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), 0.15)
 			else:
 				# Sem cubo, só virar pra continuar normal
-				move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
+				if(linha != 7):
+					move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
+				else:
+					move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
+					drift(True, move_tank, move_steering)	
+
 
 
 		if(atualiza):
 			# Está em uma nova lateral, reconfigurar o movimento
 			lateral = lateral - 1 if (lateral != 1) else 4 # Rotação anti-horária de laterais
 			linha = 2 # Sempre vai começar na linha 2
-			move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # Vira pra arena
+			print("AQUI 1")
+			if flagDrift == 0:
+				print("AQUI 2")
+				move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # Vira pra arena
+				move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 0.8) # Ré na parede 
+				move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.2) # ajustar
+			else:
+				flagDrift = 0
 			motorEsq.reset()
 			motorDir.reset()
 			sleep(0.3)
@@ -199,22 +228,18 @@ def controla(numCubos, lateral):
 				distRodas = int((motorEsq.position + motorDir.position)/2)
 				if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and filterultrassom(ultrassom) > 310):
 					# Alinha, enquanto longe da parede
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			comCubo = False
 	return
 
 if __name__ == '__main__':
 	motorEsq = LargeMotor(OUTPUT_C)
 	motorDir = LargeMotor(OUTPUT_D)
-	btn = Button()
 	sound = Sound()
 	lavanderias = lavanderias = [[1 for i in range(2)] for j in range(2)] # Todas as matrizes começam livres
 	lateral = 0
 
 	print("GO")
-
-	while not btn.any(): # Espera o botão
-		time.sleep(0.01)
 
 	sound.beep() #Beeep
 	

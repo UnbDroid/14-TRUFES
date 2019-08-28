@@ -24,7 +24,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][0] == 1):
@@ -32,7 +32,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 		elif(lavanderias[1][1] == 1):
@@ -41,7 +41,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 		elif(lavanderias[0][1] == 1):
@@ -50,7 +50,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 	elif(lateral == 2):
@@ -60,7 +60,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][0] == 1):
@@ -68,7 +68,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][1] == 1):
@@ -76,7 +76,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 		elif(lavanderias[0][1] == 1):
@@ -85,7 +85,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 		if(lavanderias[0][0] == 1):
@@ -94,7 +94,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 		elif(lavanderias[1][0] == 1):
@@ -103,7 +103,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[1][1] == 1):
@@ -111,7 +111,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[0][1] == 1):
@@ -119,7 +119,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 	elif(lateral == 4):
@@ -128,7 +128,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 		elif(lavanderias[1][0] == 1):
@@ -137,7 +137,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
 		elif(lavanderias[1][1] == 1):
@@ -146,7 +146,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, False)
+					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 		elif(lavanderias[0][1] == 1):
@@ -154,7 +154,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 			while(distRodas - abs(motorDir.position) > 0):
 				if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 					# Alinhamento
-					alinhaTempo(colorE, colorD, 40, move_tank, True)
+					alinhaTempo(colorE, colorD, VEL, move_tank, True)
 			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
 			x = 7 - linha
 
@@ -165,7 +165,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 		#Enquanto, a partir da linha que se encontrava o robô, não chega na lavanderia, avança.
 		if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
 			# Alinhamento
-			alinhaTempo(colorE, colorD, 40, move_tank, False)
+			alinhaTempo(colorE, colorD, VEL, move_tank, False)
 	move_tank.on(STOP, STOP)
 	largaBloco(garra_drive, move_tank)
 	#Acabou. 
