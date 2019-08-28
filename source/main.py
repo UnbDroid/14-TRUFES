@@ -102,7 +102,7 @@ def controla(numCubos, lateral):
 				flag = 0
 				linha = 2
 			else:
-				descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD)
+				descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD, linha)
 				linha += 1
 				flag = 0
 				motorEsq.reset()
@@ -219,8 +219,6 @@ if __name__ == '__main__':
 	sound.beep() #Beeep
 	
 	move_garra, move_tank, ultrassom, colorF, colorE, colorD, coresLavanderias, lateral, numCubos, move_steering = setRobot(lavanderias)
-	lateral = 2
-	numCubos = 3
 	controla(numCubos, lateral)
 
 	motorDir.reset()

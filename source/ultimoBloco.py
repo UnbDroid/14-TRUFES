@@ -13,7 +13,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 	"Pega o ultimo bloco ignorando o resto dos comandos para levar para a ultima lavanderia desocupada"
 	motorDir.reset()
 
-	y = int((y*360)/130)
+	y = int((y*360)/150)
 
 	# Inicia quando já está com o cubo preso na garra
 	# Baseado na lateral atual do robô

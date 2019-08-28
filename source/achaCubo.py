@@ -21,7 +21,7 @@ tempo_centro_quadrado = 1  # Esse é o tempo que ele precisa para chegar ao cent
 dist_max = 2100  # Essa é a distância do primeiro ao último quadrado visivel da linha
 N = 780
 
-def descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD):
+def descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD, linha):
 
 	motorEsq.reset()
 	motorDir.reset()
@@ -38,17 +38,22 @@ def descerLateral(move_tank, motorEsq, motorDir, ultrassom, colorE, colorD):
 	# move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(30), 0.07) # Ajuste do erro de ré
 
 	move_tank.on(SpeedPercent(40), SpeedPercent(40))
-	while(True):
-		# Faz o alinhamento
-		if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
-			motorDir.reset()
-			motorEsq.reset()
-			move_tank.on(SpeedPercent(40), SpeedPercent(40))
-			alinhaTempo(colorE, colorD, 40, move_tank, False)
-			break
-	while(580 - distMotores > 0):
-	 	distMotores = int((motorEsq.position + motorDir.position)/2)
-	 	# Faz o alinhamento	
+	
+	if(linha == 1 and colorE == COLOR_BLACK):
+		tank_drive.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 1.3)
+		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
+	else:
+		while(True):
+			# Faz o alinhamento
+			if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
+				motorDir.reset()
+				motorEsq.reset()
+				move_tank.on(SpeedPercent(40), SpeedPercent(40))
+				alinhaTempo(colorE, colorD, 40, move_tank, False)
+				break
+		while(580 - distMotores > 0):
+		 	distMotores = int((motorEsq.position + motorDir.position)/2)
+		 	# Faz o alinhamento	
 	move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 1.04) # Vira 90º à esquerda
 	move_tank.on_for_rotations(SpeedPercent(30), SpeedPercent(30), 0.07) # Ajuste do erro de ré
 
@@ -66,10 +71,11 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linh
 	print(distMotor)
 	if (distancia < dist_max):  # Pode ser que o cubo esteja no último quadrado
 		move_tank.on(SpeedPercent(50), SpeedPercent(50))
-		for i in range(0,6):
+		for i in range(0,9):
 			listaDist.append(filterultrassom(ultrassom))
-		media = int(sum(listaDist) / len(listaDist))		
+		media = int(sum(listaDist) / len(listaDist))
 		while(distancia > 300 and flag != 2):  # Verifica se achou cubo de outra linha
+			print("ULTRA:" , ultravalue)
 			print("Primeira: ", motorDir.position)
 			ultravalue = filterultrassom(ultrassom)
 			if(ultravalue in range((media-250), (media+250))):
@@ -91,8 +97,9 @@ def verificaLinha(move_tank, ultrassom, colorE, colorD, motorEsq, motorDir, linh
 			return True
 		else:
 			posiMotor = int((motorDir.position + motorEsq.position)/2)
-			go = 200 if (posiMotor > 400) else 80
+			go = 130 if (posiMotor > 350) else 80
 			# Se deu ruim, dá ré
+			print("s2")
 			print("Segunda: ", int((motorDir.position + motorEsq.position)/2))
 			move_tank.on(SpeedPercent(-50), SpeedPercent(-50))
 			while(abs(posiMotor - distMotor) > go):
