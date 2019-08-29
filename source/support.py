@@ -1,10 +1,28 @@
 from ev3dev2.motor import *
+from time import sleep, clock
 
 def filterultrassom(ultrassom):
-	valor = 0
-	for i in range(0, 20):
-		valor += ultrassom.value()
-	return int(valor/20)
+	total = 0
+	flag = 0
+
+	valor1 = ultrassom.value()
+	valor2 = valor1
+	for i in range(0, 10):
+		valor1 = ultrassom.value()
+		timeIni = time.clock()
+		while(valor1 == valor2 and flag == 0 and (time.clock() - timeIni) < 0.1):
+			valor1 = ultrassom.value()
+			if(valor1 < 80):
+				for i in range (0, 3):
+					valor1 += ultrassom.value()
+				if(valor1 < 320):
+					break
+				else:
+					valor1 = int(valor1/3)
+		flag = 1
+		total += valor1
+
+	return int(total/10)
 
 def drift(super, move_tank, move_steering):
 	#Se super for True, o robô vai dar drift de ré.

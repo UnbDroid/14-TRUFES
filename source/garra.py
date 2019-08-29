@@ -103,7 +103,7 @@ def verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal):
 			else:
 				return False, Atualiza
 
-def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, sensorFrontal, colorE, colorD):
+def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, sensorFrontal, colorE, colorD, ultrassom):
 	garra1 = MediumMotor(OUTPUT_A)
 	garra2 = MediumMotor(OUTPUT_B)
 	motorDir = LargeMotor(OUTPUT_D)
@@ -118,15 +118,16 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 
 	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
 	# Andar até chegar no bloco
-	while((motorDir.position - distDir) < 360):	
+	while((motorDir.position - distDir) < 560):	
 		# Se passar em alguma linha, entrou no quadrado, podemos diminuir a distância que falta para andar
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
 			flag = False
 			distDir -= 100
+
 	distDir = motorDir.position
 	# Dar uma pequena ré para confirmar a cor que o sensor está lendo
 	tank_drive.on(SpeedPercent(-10), SpeedPercent(-10))
-	while((abs(motorDir.position - distDir)) < 25):
+	while((abs(motorDir.position - distDir)) < 20):
 		pass
 	tank_drive.on(SpeedPercent(0), SpeedPercent(0))
 	verifica, Atualiza = verificaBloco(lateral, coresLavanderias, lavanderias, sensorFrontal)
@@ -154,6 +155,8 @@ def largaBloco(garra_drive, tank_drive):
 	garra_drive.on_for_rotations(SpeedPercent(-10), SpeedPercent(10), 0.25) # Abre garras
 	tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7) # Ré com base em 125mm de distância do cubo
 	garra_drive.on_for_rotations(SpeedPercent(10), SpeedPercent(-10), 0.35) # Fecha garras
+	tank_drive.on_for_rotations(SpeedPercent(40),SpeedPercent(40), 1)
+	tank_drive.on_for_rotations(SpeedPercent(-40),SpeedPercent(-40), 0.7)
 	garra_drive.off()
 	garra1.reset()
 	garra2.reset()

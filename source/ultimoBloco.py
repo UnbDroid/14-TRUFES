@@ -3,6 +3,10 @@ from ev3dev2.sensor.lego import *
 from garra import *
 from alinhamentoTempo import alinhaTempo
 
+# Cores do sensor
+COLOR_BLACK = 1
+COLOR_WHITE = 6
+
 #Define Vars
 N = 780
 VEL = 40
@@ -170,3 +174,49 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 	largaBloco(garra_drive, move_tank)
 	#Acabou. 
 	return
+
+
+
+def victoryLap(move_tank, colorE, colorD):
+	linha = 2
+	count = 0
+
+	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1)
+	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL), 1.5)
+	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 2.8)
+	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
+	move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.7)
+
+	#colorE.calibrate_white()
+	#colorD.calibrate_white()
+
+	move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
+	while(count < 4):
+		if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
+			# Alinhamento
+			alinhaTempo(colorE, colorD, VEL, move_tank, False)
+			linha += 1
+		if(linha == 7):
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.7)
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
+			move_tank.on_for_rotations(SpeedPercent(40), SpeedPercent(40), 4.5)
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
+			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1.7)
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL),ROT90) #Virar Direita
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 2.6)
+			move_tank.on_for_rotations(SpeedPercent(-30), SpeedPercent(30), 2.05) # 180º esquerda
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.7)
+			move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))
+			linha = 2
+			count += 1
+
+
+if __name__ == '__main__':
+	move_tank = MoveTank(OUTPUT_C, OUTPUT_D)
+	colorE = ColorSensor(INPUT_3)
+	colorD = ColorSensor(INPUT_4)
+
+	colorE.mode = 'COL-COLOR'
+	colorD.mode = 'COL-COLOR'
+
+	victoryLap(move_tank, colorE, colorD)

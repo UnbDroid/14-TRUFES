@@ -5,6 +5,9 @@ from ev3dev2.sensor.lego import *
 import time
 
 def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
+	print("-----------------------")
+	print("ALINHA AQUI")
+	print("-----------------------")
 
 	#Definindo motores
 	#tank_drive = MoveTank(OUTPUT_B, OUTPUT_D)
@@ -25,9 +28,8 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 
 	# Define se irá de ré ou para frente com base no booleano 're', alterando a velocidade pra positivo ou negativo
 	velocidade = -velocidade if (re) else velocidade
-
 	# Verifica o momento que os sensores passaram nas linhas pretas, essa verificação é feita por 0.7 segundos
-	while((time.clock() - iniTime) < 0.7):
+	while((time.clock() - iniTime) < 0.6):
 		leftColor = sensorE.value()
 		rightColor = sensorD.value()
 		if(leftColor == COLOR_BLACK):
@@ -35,21 +37,25 @@ def alinhaTempo(sensorE, sensorD, velocidade, tank_drive, re):
 		if(rightColor == COLOR_BLACK):
 			rightTime = time.clock()
 
-	if(((leftTime + rightTime) - iniTime*2) > 0.65 or abs(leftTime-rightTime) > 3):
+	if(((leftTime + rightTime) - (iniTime*2)) > 0.55 or abs(leftTime-rightTime) > 10):
 		print("WELP")
+		print((leftTime + rightTime) - (iniTime*2))
+		print((leftTime + rightTime))
 		
-	elif(leftTime - iniTime > 0.2):
+	elif(leftTime - iniTime > 0.3):
 		#Encontrou linha lateral esquerda
-		print("Passo 1")
+		print("Passo 1", leftTime - iniTime)
+		print("Passo 1.1", leftTime)
 		tank_drive.on_for_seconds(SpeedPercent(velocidade), SpeedPercent(velocidade/2), 0.3) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
-	elif(rightTime - iniTime > 0.2):
-		print("Passo 2")
+	elif(rightTime - iniTime > 0.3):
+		print("Passo 2", rightTime - iniTime)
+		print("Passo 2.1", rightTime)
 		#Encontrou linha lateral direita
 		tank_drive.on_for_seconds(SpeedPercent(velocidade/2), SpeedPercent(velocidade), 0.3) 
 		tank_drive.on(SpeedPercent(velocidade), SpeedPercent(velocidade))
 	else:
-
+		print("AQui")
 		# Tira a diferença entre os motores compensando um dos motores pela metade da velocidade
 		# Isso é feito pelo dobro do tempo da diferença em que os dois passaram pelas linhas
 		if(leftTime > rightTime):
