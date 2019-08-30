@@ -91,11 +91,13 @@ def ultimoCubo(linha, move_garra, motorDir, lateral, y, move_tank, colorE, color
 	move_garra.wait_until_not_moving()
 	move_garra.off()
 	# Chama a função para deixar o último bloco
-	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1.4)
-	if(filterultrassom(ultrassom) > 130):
+	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1.6)
+	ultraValor = filterultrassom(ultrassom)
+	print(ultraValor)
+	if(ultraValor > 60):
 		return
 	ultimoBloco(linha, lavanderias, lateral, move_tank, int((motorEsq.position + motorDir.position)/2), move_garra, motorDir, colorE, colorD, y)
-	victoryLap(move_tank, colorE, colorD)
+	victoryLap(move_tank, colorE, colorD, ultrassom)
 	numCubos += 1
 	return
 
@@ -105,6 +107,7 @@ def controla(numCubos, lateral):
 	atualiza = False
 	flag = 1 # Controle da situação de reinicialização
 	flagDrift = 0
+	vaiNaLoca = False
 
 	while(numCubos < 4):
 		while(comCubo == False):
@@ -142,6 +145,7 @@ def controla(numCubos, lateral):
 		if(atualiza == False):
 			move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))  # Inicia movimento
 			ultraDist = filterultrassom(ultrassom)
+			savedUltra = ultraDist
 			print("ultraDist", ultraDist)
 			while (ultraDist > 210):
 				ultraDist = filterultrassom(ultrassom)
@@ -156,17 +160,18 @@ def controla(numCubos, lateral):
 				# Vai pra configuração final
 				print("lateral: ", lateral)
 				ultimoCubo(linha, move_garra, motorDir, lateral, (2200 - ultraDist), move_tank, colorE, colorD, ultrassom)
-				break
+				if(numCubos == 4):
+					break
 			distRodas = int((motorEsq.position + motorDir.position)/2)
 			print("distRodas: ", distRodas)	
 			motorEsq.reset()
 			motorDir.reset()
 			move_tank.on(SpeedPercent(-VEL), SpeedPercent(-VEL)) # Dando ré
 			distRe = 0
-			distAndar = 260
+			distAndar = 160
 			print("LINHA:  ", linha)
 			if(linha == 2 and comCubo == True):
-				distAndar = 480
+				distAndar = 2000 if (savedUltra < 140) else 560
 
 			recupera = 1
 			while(abs(distRodas - distRe) > distAndar):
@@ -232,15 +237,16 @@ def controla(numCubos, lateral):
 			if(comCubo):
 				# Se estiver com cubo, tem que levar até uma lavanderia
 				if(linha != 2):
+					move_tank.on_for_rotations(SpeedPercent(VEL/2),SpeedPercent(VEL/2), 0.4)
 					move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90)
 					# A lavanderia destino é definida pela variável 'atualiza'
 					#escreveArquivo() # Atualiza a matriz de disponibilidade
 				else:
-					move_steering.on_for_rotations(32, SpeedPercent(-VEL), 3.4)
+					move_steering.on_for_rotations(35, SpeedPercent(-VEL), 3.3)
 					linha = 3
 				print("Esta linha:", linha)
 				vaiLavanderia(linha, move_tank, motorEsq, motorDir, atualiza)
-				linha = 2 if (linha == 3) else linha 
+				linha = 2 if (linha == 3) else linha
 				numCubos += 1
 				largaBloco(move_garra, move_tank)
 				if(atualiza):
@@ -270,12 +276,14 @@ def controla(numCubos, lateral):
 		if(atualiza):
 			# Está em uma nova lateral, reconfigurar o movimento
 			lateral = lateral - 1 if (lateral != 1) else 4 # Rotação anti-horária de laterais
+			if(lateral == 4):
+				vaiNaLoca = True
 			linha = 2 # Sempre vai começar na linha 2
 			print("AQUI 1")
 			if flagDrift == 0:
 				print("AQUI 2")
 				move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90) # Vira pra arena
-				move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1.2) # Ré na parede 
+				move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1.5) # Ré na parede 
 				move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.2) # Ajustar
 			else:
 				flagDrift = 0
@@ -286,7 +294,10 @@ def controla(numCubos, lateral):
 			atualiza = False
 		elif(comCubo):
 			# Deixou um cubo, mas continua na mesma lateral
-			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT180)
+			distRodas = 0
+			move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
+			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1.2)
+			move_tank.on_for_rotations(SpeedPercent(VELROT), SpeedPercent(-VELROT), ROT90)
 			motorEsq.reset()
 			motorDir.reset()
 			move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL))

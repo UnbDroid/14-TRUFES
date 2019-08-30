@@ -155,7 +155,7 @@ def iniciar(move_tank, ultrassom, colorE, colorD, coresLavanderias):
 			#move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.1)
 			
 			move_tank.on_for_rotations(SpeedPercent(-VELROT), SpeedPercent(VELROT), ROT90 + 0.01) # 90º esquerda
-
+			move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.3) 
 			# Filtro para cor de leitura #
 			colorListE = list()
 			colorListD = list()

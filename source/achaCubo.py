@@ -18,7 +18,7 @@ Livre = True
 Ocupada = False
 
 tempo_centro_quadrado = 1  # Esse é o tempo que ele precisa para chegar ao centro do quadrado
-dist_max = 1700  # Essa é a distância do primeiro ao último quadrado visivel da linha
+dist_max = 1600  # Essa é a distância do primeiro ao último quadrado visivel da linha
 N = 780
 VEL = 40
 VELROT = 30

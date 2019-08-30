@@ -12,6 +12,7 @@ N = 780
 VEL = 40
 STOP = SpeedPercent(0)
 ROT90 = 1.03
+ROT180 = 2.05
 
 def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, motorDir, colorE, colorD, y):
 	"Pega o ultimo bloco ignorando o resto dos comandos para levar para a ultima lavanderia desocupada"
@@ -92,6 +93,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 					alinhaTempo(colorE, colorD, VEL, move_tank, False)
 			move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 			x = linha
+	elif(lateral == 3):
 		if(lavanderias[0][0] == 1):
 			distRodas = y
 			move_tank.on(SpeedPercent(VEL), SpeedPercent(VEL)) # Avançando
@@ -167,7 +169,7 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 
 	while(motorDir.position < (x*N + 200)):
 		#Enquanto, a partir da linha que se encontrava o robô, não chega na lavanderia, avança.
-		if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK):
+		if(colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK and motorDir.position < (x*N - 200)):
 			# Alinhamento
 			alinhaTempo(colorE, colorD, VEL, move_tank, False)
 	move_tank.on(STOP, STOP)
@@ -177,12 +179,16 @@ def ultimoBloco(linha, lavanderias, lateral, move_tank, distRodas, garra_drive, 
 
 
 
-def victoryLap(move_tank, colorE, colorD):
+def victoryLap(move_tank, colorE, colorD, ultrassom):
 	linha = 2
 	count = 0
 
 	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 1)
-	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL), 1.5)
+	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL), ROT90)
+	if(ultrassom.value() < 400):
+		move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL), ROT180)
+		move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 2.2)
+		move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(-VEL), ROT90)
 	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(-VEL), 2.8)
 	move_tank.on_for_rotations(SpeedPercent(-VEL), SpeedPercent(VEL),ROT90) #Virar Esquerda
 	move_tank.on_for_rotations(SpeedPercent(VEL), SpeedPercent(VEL), 0.7)

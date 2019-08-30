@@ -115,10 +115,12 @@ def pegaBloco(garra_drive, tank_drive, lateral, coresLavanderias, lavanderias, s
 
 	distDir = motorDir.position
 	flag = True
+	go = 560 if (ultrassom.value() > 120) else 310
 
 	tank_drive.on(SpeedPercent(40), SpeedPercent(40))
 	# Andar até chegar no bloco
-	while((motorDir.position - distDir) < 560):	
+
+	while((motorDir.position - distDir) < go):	
 		# Se passar em alguma linha, entrou no quadrado, podemos diminuir a distância que falta para andar
 		if((colorE.value() == COLOR_BLACK or colorD.value() == COLOR_BLACK) and flag):
 			flag = False
